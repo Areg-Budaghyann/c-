@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>C++ հուշաթերթ. զանգվածներ, մատրիցներ, ենթածրագրեր</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+Armenian:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F5F8; --grid:#E1E7EE; --card:#FFFFFF; --ink:#1D2940; --muted:#5B6780;
+  --pencil:#2E5BA6; --pencil-soft:#E3EBF8; --red:#B42335; --red-soft:#FBE7EA;
+  --codebg:#F4F7FB; --line:#CDD6E1; --cell:#EDF1F6; --cellon:#2E5BA6; --cellontext:#fff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121822; --grid:#1A2230; --card:#18202C; --ink:#DCE4F0; --muted:#8E9BB0;
+    --pencil:#86A9E8; --pencil-soft:#1F2C44; --red:#F07A86; --red-soft:#3A1C24;
+    --codebg:#0F151E; --line:#2C3748; --cell:#202A39; --cellon:#86A9E8; --cellontext:#0F151E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121822; --grid:#1A2230; --card:#18202C; --ink:#DCE4F0; --muted:#8E9BB0;
+  --pencil:#86A9E8; --pencil-soft:#1F2C44; --red:#F07A86; --red-soft:#3A1C24;
+  --codebg:#0F151E; --line:#2C3748; --cell:#202A39; --cellon:#86A9E8; --cellontext:#0F151E;
+  color-scheme: dark;
+}
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+html{ scroll-padding-top:calc(env(safe-area-inset-top,0px) + 120px); }
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:22px 22px;
+  font:16px/1.55 "IBM Plex Sans", "Noto Sans Armenian", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10; background:var(--card); }
+header{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--card);
+  border-bottom:2px solid var(--pencil);
+}
+.bar{ max-width:900px; margin:0 auto; padding:10px 16px 0; }
+.toprow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.toprow h1{ font-size:17px; font-weight:700; margin:0; flex:1 1 220px; letter-spacing:-0.01em; }
+.find{ display:flex; gap:6px; }
+.find input{
+  width:92px; font:600 16px "JetBrains Mono", "Noto Sans Armenian", ui-monospace, monospace; padding:7px 9px;
+  border:1.5px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink);
+}
+button{ font:inherit; cursor:pointer; }
+.find button{ padding:7px 12px; border-radius:6px; border:1.5px solid var(--pencil); background:var(--pencil); color:var(--card); font-weight:600; font-size:15px; }
+.findmsg{ font-size:13px; color:var(--red); min-height:0; margin:4px 0 0; }
+nav{ display:flex; gap:2px; overflow-x:auto; margin-top:8px; scrollbar-width:none; }
+nav button{
+  border:0; background:none; color:var(--muted); padding:8px 12px 9px; font-weight:600; font-size:15px;
+  border-bottom:3px solid transparent; white-space:nowrap;
+}
+nav button[aria-selected="true"]{ color:var(--pencil); border-bottom-color:var(--pencil); }
+main{ max-width:900px; margin:0 auto; padding:18px 16px 60px; }
+section[hidden]{ display:none; }
+h2{ font-size:24px; line-height:1.25; margin:8px 0 6px; letter-spacing:-0.015em; }
+h3{ font-size:19px; margin:30px 0 8px; }
+p{ margin:8px 0; max-width:72ch; }
+.lead{ font-size:17px; }
+.sheet{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:14px 0; }
+.formula{ font-size:18px; font-weight:600; padding:10px 14px; background:var(--pencil-soft); border-left:4px solid var(--pencil); border-radius:4px; margin:12px 0; }
+mark.ph{ background:var(--red-soft); color:var(--red); font-weight:700; padding:0 3px; border-radius:3px; }
+pre{
+  margin:0; padding:12px 14px; background:var(--codebg); border:1px solid var(--line); border-radius:8px;
+  overflow-x:auto; font:14px/1.5 "JetBrains Mono", "Noto Sans Armenian", ui-monospace, Consolas, monospace; tab-size:4;
+  font-variant-ligatures:none; font-feature-settings:"liga" 0, "calt" 0;
+}
+code{ font-family:"JetBrains Mono", "Noto Sans Armenian", ui-monospace, Consolas, monospace; font-size:0.9em; font-variant-ligatures:none; font-feature-settings:"liga" 0, "calt" 0; }
+td code, li code, p code{ background:var(--codebg); padding:1px 5px; border-radius:4px; border:1px solid var(--line); white-space:nowrap; }
+.tbl{ overflow-x:auto; margin:10px 0; }
+table{ border-collapse:collapse; width:100%; font-size:15px; background:var(--card); }
+th,td{ text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+th{ font-weight:600; color:var(--muted); font-size:14px; }
+.two{ display:grid; grid-template-columns:1fr; gap:14px; }
+.two > *{ min-width:0; }
+@media (min-width:820px){ .two{ grid-template-columns:1fr 1fr; } }
+.fcwrap{ overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px; }
+.fctitle{ font-size:14px; font-weight:600; color:var(--muted); margin:12px 0 4px; }
+svg.fc{ display:block; margin:0 auto; color:var(--ink); }
+svg.fc .shp{ fill:var(--card); stroke:currentColor; stroke-width:1.6; }
+svg.fc .shp.hl{ stroke:var(--red); fill:var(--red-soft); }
+svg.fc .ln{ fill:none; stroke:currentColor; stroke-width:1.6; stroke-linejoin:round; }
+svg.fc .ah, svg.fc .dot{ fill:currentColor; }
+svg.fc text{ fill:currentColor; font:14px "IBM Plex Sans", "Noto Sans Armenian", system-ui, sans-serif; }
+svg.fc text.hlt{ fill:var(--red); font-weight:700; }
+svg.fc text.lb{ font-size:12px; fill:var(--muted); }
+.legend{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:14px; color:var(--muted); margin:6px 0; }
+.legend span b{ color:var(--ink); font-weight:600; }
+/* region grid */
+.regions{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.regions button{ border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:16px; padding:5px 11px; font-size:14px; }
+.regions button[aria-pressed="true"]{ border-color:var(--pencil); background:var(--pencil); color:var(--card); }
+.gridbox{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+.mgrid{ display:grid; grid-template-columns:repeat(6, 38px); gap:3px; }
+.mgrid div{ height:38px; display:flex; align-items:center; justify-content:center; font:12px "JetBrains Mono", "Noto Sans Armenian", monospace; background:var(--cell); border-radius:4px; color:var(--muted); }
+.mgrid div.on{ background:var(--cellon); color:var(--cellontext); font-weight:600; }
+.regcond{ font:600 20px "JetBrains Mono", "Noto Sans Armenian", monospace; color:var(--pencil); font-variant-ligatures:none; }
+/* problem cards */
+.list{ margin-top:10px; }
+details.pr{ background:var(--card); border:1px solid var(--line); border-radius:8px; margin:6px 0; }
+details.pr[open]{ border-color:var(--pencil); }
+details.pr summary{ list-style:none; cursor:pointer; padding:10px 12px; display:flex; gap:12px; align-items:baseline; }
+details.pr summary::-webkit-details-marker{ display:none; }
+details.pr summary .n{ font:600 15px "JetBrains Mono", "Noto Sans Armenian", monospace; color:var(--pencil); min-width:34px; }
+details.pr summary .t{ flex:1; }
+.prbody{ padding:0 12px 14px; }
+.prbody .note{ font-size:14px; color:var(--muted); margin:4px 0 10px; }
+.codehead{ display:flex; justify-content:space-between; align-items:center; margin:10px 0 4px; }
+.codehead span{ font-size:14px; font-weight:600; color:var(--muted); }
+.copy{ border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:6px; padding:3px 10px; font-size:13px; }
+.grouphead{ font-size:15px; font-weight:600; color:var(--muted); margin:22px 0 4px; }
+.why{ background:var(--card); border:1px solid var(--line); border-left:4px solid var(--pencil); border-radius:6px; padding:10px 16px 12px; margin:16px 0; }
+.why.mist{ border-left-color:var(--red); }
+.why h4{ margin:2px 0 6px; font-size:16px; }
+.why ul{ margin:0; padding-left:20px; }
+.why li{ margin:6px 0; max-width:76ch; }
+.pcard{ background:var(--card); border:1px solid var(--line); border-radius:8px; margin:6px 0; padding:10px 12px; }
+.pcard.opened{ border-color:var(--pencil); }
+.phead{ display:flex; gap:12px; align-items:baseline; }
+.phead .n{ font:600 15px "JetBrains Mono", "Noto Sans Armenian", monospace; color:var(--pencil); min-width:34px; }
+.phead .t{ flex:1; }
+.pbtns{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0 46px; }
+.pbtns button{ border:1.5px solid var(--line); background:var(--card); color:var(--ink); border-radius:6px; padding:4px 11px; font-size:14px; }
+.pbtns button.sol{ border-color:var(--pencil); color:var(--pencil); font-weight:600; }
+.phint{ margin:8px 0 0 46px; font-size:15px; color:var(--muted); }
+.psol{ margin-top:6px; }
+.psol .note{ font-size:14px; color:var(--muted); margin:4px 0 10px; }
+.find .rnd{ background:var(--card); color:var(--pencil); }
+.rndbig{ border:1.5px solid var(--pencil); background:var(--pencil); color:var(--card); border-radius:8px; padding:9px 16px; font-weight:600; font-size:16px; }
+.pcard.rndbox{ border:2px solid var(--pencil); margin:14px 0 6px; }
+.rndtop{ font-size:13px; font-weight:600; color:var(--muted); margin:0 0 4px; }
+:focus-visible{ outline:2.5px solid var(--pencil); outline-offset:2px; }
+@media (max-width:520px){ h2{ font-size:21px; } pre{ font-size:13px; } .toprow h1{ font-size:15px; flex-basis:100%; } .bar{ padding-top:8px; } nav{ margin-top:4px; } nav button{ padding:6px 10px 7px; font-size:14px; } .find input{ padding:5px 8px; } .find button{ padding:5px 12px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="toprow">
+      <h1>C++ հուշաթերթ. զանգվածներ, մատրիցներ, ֆունկցիաներ</h1>
+      <form class="find" id="findForm">
+        <input id="findNum" type="number" inputmode="numeric" placeholder="№" aria-label="Խնդրի համարը">
+        <button type="submit">Բացել</button>
+        <button type="button" class="rnd" id="rndBtn">🎲 Պատահական</button>
+      </form>
+    </div>
+    <p class="findmsg" id="findMsg" role="status"></p>
+    <nav role="tablist" aria-label="Բաժիններ">
+      <button role="tab" data-tab="principle" aria-selected="true">Սկզբունքը</button>
+      <button role="tab" data-tab="b1" aria-selected="false">Զանգվածներ 221–300</button>
+      <button role="tab" data-tab="b2" aria-selected="false">Մատրիցներ 411–440</button>
+      <button role="tab" data-tab="b3" aria-selected="false">Ենթածրագրեր 591–625</button>
+      <button role="tab" data-tab="practice" aria-selected="false">Վարժություններ</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="principle">
+  <h2>Բոլոր խնդիրները կառուցվում են երեք ձևանմուշից</h2>
+  <p class="lead">Յուրաքանչյուր բլոկում կոդը գրեթե նույնն է։ Խնդրից խնդիր փոխվում են միայն երեք տեղ՝ <mark class="ph">սկզբնական արժեքը</mark>, <mark class="ph">պայմանը</mark> և <mark class="ph">գործողությունը</mark>։ Սովորիր կմախքը, իսկ այդ երեք տեղերը լրացրու ստորև բերված աղյուսակներից։</p>
+  <p>Ամենուր համարակալումը սկսվում է 1-ից, ինչպես խնդրագրքում. զանգվածը հայտարարված է պաշարով՝ <code>x[101]</code>, 0-րդ բջիջը չի օգտագործվում։ <code>for</code> ցիկլը բլոկ-սխեմայում պատկերվում է վեցանկյունով՝ <code>i = 1, n</code>, այսինքն՝ «i-ն 1-ից մինչև n»։</p>
+  <div class="legend">
+    <span><b>օվալ</b> — սկիզբ, վերջ, վերադարձ</span>
+    <span><b>զուգահեռագիծ</b> — ներմուծում, արտածում</span>
+    <span><b>ուղղանկյուն</b> — հաշվարկ</span>
+    <span><b>շեղանկյուն</b> — պայման</span>
+    <span><b>վեցանկյուն</b> — for ցիկլ</span>
+    <span><b>կողային գծերով ուղղանկյուն</b> — ֆունկցիայի կանչ</span>
+  </div>
+
+  <h3>Ձևանմուշ 1. Միաչափ զանգված (221–260, 291–300)</h3>
+  <div class="formula">զանգվածի ներմուծում → ցիկլ ըստ i-ի → if (պայման) → գործողություն → արտածում</div>
+  <div class="two">
+    <div>
+<pre>#include &lt;iostream&gt;
+#include &lt;cmath&gt;
+using namespace std;
+
+int main() {
+    int n;
+    double x[101];      // int x[101], եթե պետք են % և զույգություն
+    <mark class="ph">արդյունքի փոփոխականներ</mark>
+    cin &gt;&gt; n;
+    for (int i = 1; i &lt;= n; i++)
+        cin &gt;&gt; x[i];
+
+    <mark class="ph">սկզբնական արժեք</mark>;
+    for (int i = 1; i &lt;= n; i++)
+        if (<mark class="ph">պայման</mark>)
+            <mark class="ph">գործողություն</mark>;
+
+    <mark class="ph">արտածում</mark>;
+    return 0;
+}</pre>
+    </div>
+    <div class="fcwrap" data-tpl="t1"></div>
+  </div>
+
+  <p><b>Ինչ ենք կուտակում</b> (սկզբնական արժեքը, գործողությունը if-ի ներսում, ինչ ենք արտածում).</p>
+  <div class="tbl"><table>
+    <tr><th>Պետք է գտնել</th><th>Ցիկլից առաջ</th><th>Ցիկլում (if-ի ներսում)</th><th>Արտածում</th></tr>
+    <tr><td>Գումարը</td><td><code>s = 0</code></td><td><code>s = s + x[i]</code></td><td><code>s</code></td></tr>
+    <tr><td>Արտադրյալը</td><td><code>p = 1</code></td><td><code>p = p * x[i]</code></td><td><code>p</code></td></tr>
+    <tr><td>Քանակը</td><td><code>cnt = 0</code></td><td><code>cnt = cnt + 1</code></td><td><code>cnt</code></td></tr>
+    <tr><td>Միջին թվաբանականը</td><td><code>s = 0, cnt = 0</code></td><td><code>s = s + x[i]</code>, <code>cnt = cnt + 1</code></td><td><code>s / cnt</code> (եթե <code>cnt &gt; 0</code>)</td></tr>
+    <tr><td>Միջին քառակուսայինը</td><td><code>s = 0, cnt = 0</code></td><td><code>s = s + x[i] * x[i]</code>, <code>cnt = cnt + 1</code></td><td><code>sqrt(s / cnt)</code></td></tr>
+    <tr><td>Քառակուսիների, խորանարդների, բացարձակ արժեքների գումարը</td><td><code>s = 0</code></td><td><code>s = s + x[i] * x[i]</code>, <code>x[i] * x[i] * x[i]</code>, <code>fabs(x[i])</code></td><td><code>s</code></td></tr>
+    <tr><td>Նոր Y վեկտոր (291–300)</td><td><code>m = 0</code></td><td><code>m = m + 1</code>, <code>y[m] = x[i]</code></td><td>ցիկլ <code>i = 1, m</code>. <code>y[i]</code></td></tr>
+  </table></div>
+
+  <p><b>Ինչ պայման</b> գրել if-ում.</p>
+  <div class="tbl"><table>
+    <tr><th>Խնդրում ասված է</th><th>Պայմանը</th></tr>
+    <tr><td>ինդեքսը զույգ է / կենտ է</td><td><code>i % 2 == 0</code> / <code>i % 2 != 0</code></td></tr>
+    <tr><td>ինդեքսը բազմապատիկ է k-ին</td><td><code>i % k == 0</code></td></tr>
+    <tr><td>դրական / բացասական / զրոյական</td><td><code>x[i] &gt; 0</code> / <code>x[i] &lt; 0</code> / <code>x[i] == 0</code></td></tr>
+    <tr><td>տարրը զույգ է / կենտ է (ամբողջ թվեր)</td><td><code>x[i] % 2 == 0</code> / <code>x[i] % 2 != 0</code></td></tr>
+    <tr><td>բազմապատիկ է k-ին (ամբողջ թվեր)</td><td><code>x[i] % k == 0</code></td></tr>
+    <tr><td>5-ի բաժանելիս տալիս է 2 մնացորդ</td><td><code>x[i] % 5 == 2</code></td></tr>
+    <tr><td>պատկանում է [a; b]-ին</td><td><code>x[i] &gt;= a &amp;&amp; x[i] &lt;= b</code></td></tr>
+    <tr><td>պատկանում է (a; b)-ին</td><td><code>x[i] &gt; a &amp;&amp; x[i] &lt; b</code></td></tr>
+    <tr><td>բացարձակ արժեքով փոքր է k-ից</td><td><code>fabs(x[i]) &lt; k</code></td></tr>
+    <tr><td>ամբողջ մասը բազմապատիկ է k-ին</td><td><code>(int)x[i] % k == 0</code></td></tr>
+    <tr><td>արժեքը մեծ է ինդեքսից / հավասար չէ ինդեքսին</td><td><code>x[i] &gt; i</code> / <code>x[i] != i</code></td></tr>
+    <tr><td>ինդեքսը որևէ թվի քառակուսի է</td><td><code>r = (int)sqrt(i)</code>, հետո <code>r * r == i</code></td></tr>
+  </table></div>
+
+  <div class="why">
+    <h4>Ինչու է այդպես</h4>
+    <ul>
+      <li>Գումարը սկսում ենք 0-ից, իսկ արտադրյալը՝ 1-ից. եթե <code>p = 0</code>, ցանկացած բազմապատկումից հետո կմնա 0։</li>
+      <li>Միջինի համար պետք է երկու փոփոխական՝ գումարը <code>s</code> և քանակը <code>cnt</code>, որովհետև միջին = գումար / քանակ։ Բաժանելուց առաջ ստուգում ենք <code>cnt &gt; 0</code>, այլապես կբաժանենք 0-ի։</li>
+      <li>Միջին քառակուսայինը. գումարում ենք քառակուսիները, բաժանում ենք քանակի վրա և արմատ հանում՝ <code>sqrt(s / cnt)</code>։ <code>sqrt</code>-ի, <code>fabs</code>-ի, <code>sin</code>-ի, <code>log</code>-ի համար պետք է <code>#include &lt;cmath&gt;</code>։</li>
+      <li><code>s</code>-ը միշտ <code>double</code> է։ Եթե <code>s</code>-ը և <code>cnt</code>-ը երկուսն էլ <code>int</code> լինեն, <code>s / cnt</code>-ը կկտրի կոտորակային մասը (7 / 2 = 3)։</li>
+      <li><code>%</code> (մնացորդ) գործողությունն աշխատում է միայն ամբողջ թվերի հետ։ Եթե խնդիրը խոսում է զույգության, բազմապատիկության կամ մնացորդի մասին, զանգվածը հայտարարիր <code>int</code>։ Իրական թվի ամբողջ մասը՝ <code>(int)x[i]</code>։</li>
+      <li>Ինդեքսի մասին պայմանը («զույգ ինդեքսով», «ինդեքսը բազմապատիկ է k-ին») գրվում է <code>i</code>-ով, իսկ արժեքի մասին՝ <code>x[i]</code>-ով։ Այս երկուսը շփոթելը ամենահաճախ սխալն է։</li>
+      <li>«Բազմապատիկ է k-ին» և «բաժանվում է k-ի առանց մնացորդի» նույն բանն են՝ <code>% k == 0</code>։</li>
+      <li>Երբ պետք է երկու պատասխան (230, 243, 246), ցիկլը մեկն է, կուտակիչները՝ երկու. կամ մեկ if-ի մեջ երկու գործողություն, կամ երկու առանձին if։</li>
+    </ul>
+  </div>
+
+  <h3>Ձևանմուշ 1բ. Մեծագույն և փոքրագույն (261–270)</h3>
+  <p>Նույն ցիկլն է, բայց սկսում ենք առաջին տարրից և անցնում <code>i = 2</code>-ից։ Ամենահարմարը <code>k</code> համարը պահելն է. այդ դեպքում արժեքը <code>x[k]</code>-ն է։</p>
+  <div class="two">
+    <div>
+<pre>k = 1;
+for (int i = 2; i &lt;= n; i++)
+    if (x[i] <mark class="ph">&gt;</mark> x[k])
+        k = i;
+// x[k]՝ արժեքը, k՝ համարը</pre>
+      <div class="tbl"><table>
+        <tr><th>Պետք է</th><th>Նշանը if-ում</th></tr>
+        <tr><td>մեծագույնը (առաջինը)</td><td><code>x[i] &gt; x[k]</code></td></tr>
+        <tr><td>վերջին մեծագույնը</td><td><code>x[i] &gt;= x[k]</code></td></tr>
+        <tr><td>փոքրագույնը (առաջինը)</td><td><code>x[i] &lt; x[k]</code></td></tr>
+        <tr><td>վերջին փոքրագույնը</td><td><code>x[i] &lt;= x[k]</code></td></tr>
+      </table></div>
+    </div>
+    <div class="fcwrap" data-tpl="t1m"></div>
+  </div>
+
+  <div class="why">
+    <h4>Ինչու է այդպես</h4>
+    <ul>
+      <li>Սկզբնական արժեքը վերցնում ենք առաջին տարրից, ոչ թե 0-ից. եթե բոլոր տարրերը բացասական են, 0-ն սխալ «մեծագույն» կդառնա։ Քանի որ առաջինն արդեն վերցված է, ցիկլը սկսվում է 2-ից։</li>
+      <li>Եթե պետք է և՛ արժեքը, և՛ համարը, պահիր միայն <code>k</code> համարը, արժեքը <code>x[k]</code>-ն է։</li>
+      <li><code>&gt;</code> նշանով <code>k</code>-ն փոխվում է միայն խիստ մեծ տարր գտնելիս, ուստի մնում է առաջին մեծագույնը։ <code>&gt;=</code> նշանով այն փոխվում է նաև հավասարի դեպքում, ուստի մնում է վերջինը։</li>
+      <li>Մեծագույնն ու փոքրագույնը միասին (263, 264). մեկ ցիկլ, երկու իրարից անկախ if։</li>
+    </ul>
+  </div>
+
+  <h3>Ձևանմուշ 1գ. Նոր վեկտոր (291–300)</h3>
+  <div class="two">
+<pre>m = 0;
+for (int i = 1; i &lt;= n; i++)
+    if (<mark class="ph">պայման</mark>) {
+        m = m + 1;
+        y[m] = x[i];
+    }
+if (m == 0)
+    cout &lt;&lt; "Վեկտորը դատարկ է";
+else
+    for (int i = 1; i &lt;= m; i++)
+        cout &lt;&lt; y[i] &lt;&lt; " ";</pre>
+    <div class="fcwrap" data-tpl="t1v"></div>
+  </div>
+
+  <div class="why">
+    <h4>Ինչու է այդպես</h4>
+    <ul>
+      <li><code>m</code>-ը միաժամանակ նոր վեկտորի տարրերի քանակն է և վերջին լցված բջջի համարը։ Սկզբում մեծացնում ենք <code>m</code>-ը, հետո գրում <code>y[m]</code>-ի մեջ, այդպես առաջին տարրը կընկնի <code>y[1]</code>-ի մեջ։</li>
+      <li>Ցիկլում <code>x</code>-ի համարը <code>i</code>-ն է, իսկ <code>y</code>-ի համարը՝ <code>m</code>-ը. դրանք տարբեր են, որովհետև ոչ բոլոր տարրերն են անցնում։</li>
+      <li>«Հեռացնելով» բառով խնդիրներում պայմանը շրջվում է. «հեռացնել դրականները» = «վերցնել <code>x[i] &lt;= 0</code>»։</li>
+      <li>Եթե ոչ մի տարր չհամապատասխանեց, <code>m</code>-ը մնում է 0, և արտածում ենք «Վեկտորը դատարկ է»։</li>
+    </ul>
+  </div>
+
+  <h3>Ձևանմուշ 2. n×n մատրից (411–440)</h3>
+  <div class="formula">մատրիցի ներմուծում → ցիկլ ըստ i-ի → ցիկլ ըստ j-ի → if (տիրույթ &amp;&amp; պայման) → գործողություն → արտածում</div>
+  <p>Սա 1-ին ձևանմուշն է, միայն ցիկլերը երկուսն են, իսկ պայմանը բաղկացած է երկու մասից՝ <b>որտեղ</b> է գտնվում տարրը (տիրույթ) և <b>ինչպիսին</b> է այն (պայման 1-ին ձևանմուշի աղյուսակից, որտեղ <code>x[i]</code>-ն փոխարինվում է <code>c[i][j]</code>-ով)։ Գործողությունները նույնն են՝ գումար, արտադրյալ, քանակ, միջիններ։</p>
+  <div class="two">
+<pre>int n;
+double c[11][11];
+cin &gt;&gt; n;
+for (int i = 1; i &lt;= n; i++)
+    for (int j = 1; j &lt;= n; j++)
+        cin &gt;&gt; c[i][j];
+
+<mark class="ph">սկզբնական արժեք</mark>;
+for (int i = 1; i &lt;= n; i++)
+    for (int j = 1; j &lt;= n; j++)
+        if (<mark class="ph">տիրույթ</mark> &amp;&amp; <mark class="ph">պայման</mark>)
+            <mark class="ph">գործողություն</mark>;
+<mark class="ph">արտածում</mark>;</pre>
+    <div class="fcwrap" data-tpl="t2"></div>
+  </div>
+  <p><b>Տիրույթներ.</b> Սեղմիր՝ բջիջները տեսնելու համար։ Գլխավոր անկյունագիծը գնում է վերին ձախ անկյունից դեպի ստորին աջը, օժանդակը՝ վերին աջից դեպի ստորին ձախը։</p>
+  <div class="regions" id="regions"></div>
+  <div class="gridbox"><div class="mgrid" id="mgrid" aria-label="6×6 մատրից"></div><div><div class="regcond" id="regcond"></div><p class="note" style="color:var(--muted);font-size:14px">n×n մատրիցում, այստեղ n = 6</p></div></div>
+  <div class="tbl"><table>
+    <tr><th>Տիրույթ</th><th>Գլխավոր անկյունագիծ</th><th>Օժանդակ անկյունագիծ</th></tr>
+    <tr><td>անկյունագծի վրա</td><td><code>i == j</code></td><td><code>i + j == n + 1</code></td></tr>
+    <tr><td>վերև</td><td><code>i &lt; j</code></td><td><code>i + j &lt; n + 1</code></td></tr>
+    <tr><td>վերև կամ նրա վրա</td><td><code>i &lt;= j</code></td><td><code>i + j &lt;= n + 1</code></td></tr>
+    <tr><td>ներքև</td><td><code>i &gt; j</code></td><td><code>i + j &gt; n + 1</code></td></tr>
+    <tr><td>ներքև կամ նրա վրա</td><td><code>i &gt;= j</code></td><td><code>i + j &gt;= n + 1</code></td></tr>
+  </table></div>
+  <p>Եվս երեք պայման, որոնք հանդիպում են միայն մատրիցներում. ինդեքսների գումարը կենտ է՝ <code>(i + j) % 2 != 0</code>, տարրն ամբողջ թիվ է՝ <code>c[i][j] == (int)c[i][j]</code>, կոտորակային մասը՝ <code>c[i][j] - (int)c[i][j]</code>։ 411–420 խնդիրներում չափը նշանակված է m, դա նույնն է, ինչ n-ը։</p>
+
+  <div class="why">
+    <h4>Ինչու է այդպես</h4>
+    <ul>
+      <li><code>i</code>-ն տողի համարն է (վերևից ներքև), <code>j</code>-ն՝ սյան համարը (ձախից աջ)։</li>
+      <li>Գլխավոր անկյունագծի վրա տողի և սյան համարները հավասար են՝ <code>i == j</code>։ Նրանից վերև սյան համարն ավելի մեծ է՝ <code>i &lt; j</code>, ներքև՝ ավելի փոքր՝ <code>i &gt; j</code>։</li>
+      <li>Օժանդակ անկյունագծի վրա <code>i + j</code>-ն միշտ հավասար է <code>n + 1</code>-ի. n = 4-ի դեպքում դրանք (1,4), (2,3), (3,2), (4,1) բջիջներն են։ Վերևում գումարն ավելի փոքր է, ներքևում՝ ավելի մեծ։</li>
+      <li>«Վերև» կամ «ներքև»՝ խիստ նշան (<code>&lt;</code>, <code>&gt;</code>)։ «Վերև կամ նրա վրա»՝ ոչ խիստ (<code>&lt;=</code>, <code>&gt;=</code>)։</li>
+      <li>Տիրույթն ու պայմանը միացնում ենք <code>&amp;&amp;</code>-ով («և»)։ Ամբողջ մատրիցն անցնում ենք երկու լրիվ ցիկլով, իսկ ավելորդ բջիջները կտրում է if-ը. այդպես հնարավոր չէ սխալվել ցիկլի սահմաններում։</li>
+      <li>Մեծագույն կամ փոքրագույն գտնելիս սկզբնական արժեքը վերցրու տիրույթի <b>ներսում</b> գտնվող բջջից. օրինակ՝ գլխավոր անկյունագծի համար <code>c[1][1]</code>, օժանդակի համար՝ <code>c[1][n]</code>։</li>
+      <li>Բլոկ-սխեմայում j-ի ցիկլն ամբողջությամբ գտնվում է i-ի ցիկլի ներսում, իսկ if-ը՝ j-ի ցիկլի ներսում։</li>
+    </ul>
+  </div>
+
+  <h3>Ձևանմուշ 3. Ֆունկցիաներ և պրոցեդուրաներ (591–625)</h3>
+  <div class="formula">ֆունկցիան պատասխանը տալիս է return-ով, պրոցեդուրան void է և պատասխանը տալիս է &amp; նշանով պարամետրի միջոցով</div>
+  <div class="tbl"><table>
+    <tr><th></th><th>Ֆունկցիա</th><th>Պրոցեդուրա</th></tr>
+    <tr><td>Վերնագիր</td><td><code>double max3(double x, double y, double z)</code></td><td><code>void max3(double x, double y, double z, double &amp;m)</code></td></tr>
+    <tr><td>Ինչպես է տալիս պատասխանը</td><td><code>return m;</code></td><td>գրում է <code>m</code>-ի մեջ (<code>&amp;</code>-ի շնորհիվ փոխվում է main-ի փոփոխականը)</td></tr>
+    <tr><td>Կանչը main-ում</td><td><code>m1 = max3(a, a + b, a - b);</code></td><td><code>max3(a, a + b, a - b, m1);</code></td></tr>
+    <tr><td>Վերջը սխեմայում</td><td>օվալ «Վերադարձ m»</td><td>օվալ «Վերջ»</td></tr>
+  </table></div>
+  <p><b>591–600.</b> Մեկ անգամ գրում ես <code>max3</code> կամ <code>min3</code> (min-ի համար նշանը <code>&lt;</code> է), իսկ main-ում յուրաքանչյուր փակագիծ հաշվում ես առանձին կանչով՝ <code>m1 = …</code>, <code>m2 = …</code>, հետո՝ <code>y</code>-ը։</p>
+  <div class="two">
+<pre>double max3(double x, double y, double z) {
+    double m;
+    m = x;
+    if (y &gt; m) m = y;
+    if (z &gt; m) m = z;
+    return m;
+}
+
+void max3p(double x, double y, double z, double &amp;m) {
+    m = x;
+    if (y &gt; m) m = y;
+    if (z &gt; m) m = z;
+}</pre>
+    <div>
+      <div class="fctitle">max3 ֆունկցիա</div>
+      <div class="fcwrap" data-tpl="t3f"></div>
+      <div class="fctitle">Հիմնական ծրագիր (591)</div>
+      <div class="fcwrap" data-tpl="t3m"></div>
+    </div>
+  </div>
+  <p><b>601–610.</b> φ ֆունկցիան մեկ տող է՝ <code>return բանաձև;</code>։ main-ում x-ը և y-ը տալիս ես պայմանից, ներմուծում ես a-ն, հաշվում ես <code>f = phi(x, y)</code>, հետո՝ z-ը։ 606–610-ում նույնը պրոցեդուրայով է՝ <code>void phi(double x, double y, double &amp;f) { f = բանաձև; }</code>։ Լոգարիթմը 3 հիմքով՝ <code>log(t) / log(3)</code>, ctg՝ <code>1 / tan(t)</code>, arctg՝ <code>atan(t)</code>։</p>
+<pre>double phi(double x, double y) {
+    return log2(x + y);
+}
+// main-ում.
+x = 2; y = 5;
+cin &gt;&gt; a;
+f = phi(x, y);
+z = a * (x * x + y * y) * f * f;</pre>
+  <p><b>611–625.</b> Զանգվածի ներմուծումը միշտ <code>input</code> պրոցեդուրան է, արտածումը՝ <code>output</code> պրոցեդուրան, իսկ «թիվ հաշվելը»՝ ֆունկցիա, որի մարմինը 1-ին ձևանմուշն է։ Զանգվածը փոխանցվում է առանց <code>&amp;</code>-ի (այն առանց այդ էլ փոխվում է), իսկ <code>n</code>-ը՝ <code>&amp;</code>-ով, որովհետև ներմուծվում է ներսում։</p>
+  <div class="two">
+<pre>void input(int &amp;n, double x[]) {
+    cin &gt;&gt; n;
+    for (int i = 1; i &lt;= n; i++)
+        cin &gt;&gt; x[i];
+}
+
+void output(int m, double y[]) {
+    for (int i = 1; i &lt;= m; i++)
+        cout &lt;&lt; y[i] &lt;&lt; " ";
+}
+
+double sumPos(int n, double x[]) {
+    double s;
+    s = 0;
+    for (int i = 1; i &lt;= n; i++)
+        if (x[i] &gt; 0)
+            s = s + x[i];
+    return s;
+}
+// main-ում.
+input(n, x);
+s = sumPos(n, x);</pre>
+    <div>
+      <div class="fctitle">input պրոցեդուրա</div>
+      <div class="fcwrap" data-tpl="t3i"></div>
+      <div class="fctitle">Հիմնական ծրագիր</div>
+      <div class="fcwrap" data-tpl="t3am"></div>
+    </div>
+  </div>
+  <div class="why">
+    <h4>Ինչու է այդպես</h4>
+    <ul>
+      <li>Ֆունկցիա ենք գրում, երբ արդյունքը մեկ թիվ է, որը միանգամից օգտագործվում է արտահայտության մեջ՝ <code>y = m1 + m2</code>։ Վերնագրում տիպը (<code>double</code> կամ <code>int</code>) այն է, ինչ վերադարձնում է <code>return</code>-ը։</li>
+      <li>Պրոցեդուրան (<code>void</code>) ոչինչ չի վերադարձնում։ Պատասխանը գրվում է այն պարամետրի մեջ, որի առջև կա <code>&amp;</code>։ Առանց <code>&amp;</code>-ի պրոցեդուրան կփոխի իր պատճենը, և main-ում արժեքը չի փոխվի։</li>
+      <li>Զանգվածը (<code>x[]</code>) և մատրիցը (<code>c[][11]</code>) փոխանցվում են առանց <code>&amp;</code>-ի, և ենթածրագրում կատարված փոփոխությունները միևնույն է երևում են main-ում։</li>
+      <li>Ենթածրագիրը գրվում է main-ից <b>վերև</b>, որպեսզի կոմպիլյատորն այն ճանաչի կանչելու պահին։</li>
+      <li>Պարամետրերի անունները կարող են չհամընկնել main-ի փոփոխականների անունների հետ. կարևոր է միայն հերթականությունը։ <code>max3(a, a + b, a - b)</code> կանչում <code>x = a</code>, <code>y = a + b</code>, <code>z = a - b</code>։</li>
+      <li>Բլոկ-սխեմայում յուրաքանչյուր ենթածրագիր ունի իր առանձին սխեման։ Ֆունկցիայինն ավարտվում է «Վերադարձ …»-ով, պրոցեդուրայինը՝ «Վերջ»-ով։ main-ում կանչը գծվում է կողային գծերով ուղղանկյունով։</li>
+    </ul>
+  </div>
+
+  <h3>Տիպիկ սխալներ</h3>
+  <div class="why mist">
+    <ul>
+      <li>Արտադրյալի համար <code>p = 0</code> (պետք է <code>p = 1</code>)։</li>
+      <li>Ներմուծումը 1-ից, իսկ մշակման ցիկլը 0-ից (կամ հակառակը)։ Ամենուր օգտագործիր <code>1 … n</code>։</li>
+      <li><code>%</code> <code>double</code> թվի հետ՝ կոմպիլյացիայի սխալ։ Օգտագործիր <code>int</code> զանգված կամ <code>(int)x[i]</code>։</li>
+      <li><code>=</code> (վերագրում) և <code>==</code> (համեմատում) շփոթել if-ի մեջ։</li>
+      <li>Միջինը առանց <code>cnt &gt; 0</code> ստուգման։</li>
+      <li>Մոռացված <code>&amp;</code> պրոցեդուրայի ելքային պարամետրի առջև։</li>
+      <li>Մոռացված <code>#include &lt;cmath&gt;</code>, երբ կոդում կա <code>sqrt</code>, <code>fabs</code>, <code>sin</code>, <code>log</code>։</li>
+      <li>Մեծագույնի սկզբնական արժեքը <code>0</code>, ոչ թե առաջին տարրը։</li>
+    </ul>
+  </div>
+</section>
+
+<section id="b1" hidden>
+  <h2>Միաչափ զանգվածներ</h2>
+  <p>Ձևանմուշ 1. ներմուծում → ցիկլ → if → գործողություն → արտածում։ Սեղմիր խնդրի վրա՝ կոդը և բլոկ-սխեման բացելու համար։</p>
+  <div class="list" id="list1"></div>
+</section>
+<section id="b2" hidden>
+  <h2>n×n մատրիցներ</h2>
+  <p>Ձևանմուշ 2. երկու ցիկլ, պայման = տիրույթ &amp;&amp; տարրի հատկություն։</p>
+  <div class="list" id="list2"></div>
+</section>
+<section id="b3" hidden>
+  <h2>Ենթածրագրեր</h2>
+  <p>Ձևանմուշ 3. ֆունկցիան վերադարձնում է return-ով, պրոցեդուրան՝ &amp; նշանով պարամետրի միջոցով։</p>
+  <div class="list" id="list3"></div>
+</section>
+<section id="practice" hidden>
+  <h2>Վարժություններ ինքնուրույն լուծելու համար</h2>
+  <p>Խնդիրներ նույն գրքից, որոնք չկան քո ցուցակում, բայց լուծվում են նույն ձևանմուշներով։ Նախ փորձիր ինքդ գրել կոդը և բլոկ-սխեման։ Եթե չի ստացվում, բաց հուշումը, իսկ վերջում ստուգիր լուծումով։</p>
+  <p><button type="button" class="rndbig" id="rndBtn2">🎲 Պատահական խնդիր իմ ցուցակից</button></p>
+  <div class="pcard rndbox" id="rndBox" hidden></div>
+  <div class="list" id="listP"></div>
+</section>
+</main>
+
+<script>
+/* ---------- AST helpers ---------- */
+const T = text => ({t:'term', text});
+const IN = (label, code=[]) => ({t:'io', label, code});
+const OUT = (label, code=[]) => ({t:'io', label, code});
+const P = s => { const a = Array.isArray(s) ? s : [s]; return {t:'proc', label:a.join('\n'), code:a.map(x => x + ';')}; };
+const CALL = s => ({t:'call', label:s, code:[s + ';']});
+const IF = (cond, yes, no=[]) => ({t:'if', cond, yes, no});
+const FOR = (v, from, to, body) => ({t:'for', v, from, to, body});
+const RET = e => ({t:'ret', e});
+const H = n => { n.hl = true; return n; };
+
+/* ---------- code emitter ---------- */
+const pad = k => '    '.repeat(k);
+const isSimple = ns => ns.length === 1 && ['proc','call','io'].includes(ns[0].t) && ns[0].code.length === 1;
+function emit(ns, ind, out){ ns.forEach(n => emitNode(n, ind, out)); }
+function emitNode(n, ind, out){
+  if (n.t === 'proc' || n.t === 'call' || n.t === 'io') { n.code.forEach(l => out.push(pad(ind) + l)); return; }
+  if (n.t === 'ret') { out.push(pad(ind) + 'return ' + n.e + ';'); return; }
+  if (n.t === 'term') return;
+  if (n.t === 'if') {
+    if (isSimple(n.yes)) { out.push(pad(ind) + `if (${n.cond})`); emit(n.yes, ind + 1, out); }
+    else { out.push(pad(ind) + `if (${n.cond}) {`); emit(n.yes, ind + 1, out); out.push(pad(ind) + '}'); }
+    if (n.no.length) {
+      if (isSimple(n.no)) { out.push(pad(ind) + 'else'); emit(n.no, ind + 1, out); }
+      else { out.push(pad(ind) + 'else {'); emit(n.no, ind + 1, out); out.push(pad(ind) + '}'); }
+    }
+    return;
+  }
+  if (n.t === 'for') {
+    const hdr = `for (int ${n.v} = ${n.from}; ${n.v} <= ${n.to}; ${n.v}++)`;
+    const b = n.body;
+    const bare = isSimple(b) || (b.length === 1 && (b[0].t === 'for' || (b[0].t === 'if' && !b[0].no.length)));
+    if (bare) { out.push(pad(ind) + hdr); emit(b, ind + 1, out); }
+    else { out.push(pad(ind) + hdr + ' {'); emit(b, ind + 1, out); out.push(pad(ind) + '}'); }
+  }
+}
+function program(p){
+  const body = [];
+  for (const s of (p.subs || [])) {
+    body.push(s.sig + ' {'); (s.decl || []).forEach(d => body.push(pad(1) + d)); emit(s.body, 1, body); body.push('}', '');
+  }
+  body.push('int main() {'); p.decl.forEach(d => body.push(pad(1) + d)); emit(p.body, 1, body); body.push(pad(1) + 'return 0;', '}');
+  const text = body.join('\n');
+  const head = ['#include <iostream>'];
+  if (/\b(sqrt|fabs|sin|cos|tan|atan|exp|log|log2)\s*\(/.test(text)) head.push('#include <cmath>');
+  head.push('using namespace std;', '');
+  return head.join('\n') + '\n' + text;
+}
+
+/* ---------- flowchart renderer ---------- */
+const FONT = '14px "IBM Plex Sans", "Noto Sans Armenian", system-ui, sans-serif';
+const mctx = document.createElement('canvas').getContext('2d');
+function tw(t){ mctx.font = FONT; return Math.max(...String(t).split('\n').map(l => mctx.measureText(l).width)); }
+const V = 26, BH = 38, LH = 18;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function textSvg(x, yc, t, cls){
+  const ls = String(t).split('\n'); const y0 = yc - (ls.length - 1) * LH / 2;
+  return `<text class="${cls}" x="${x}" y="${y0}" text-anchor="middle" dominant-baseline="central">` +
+    ls.map((l, i) => `<tspan x="${x}"${i ? ` dy="${LH}"` : ''}>${esc(l)}</tspan>`).join('') + '</text>';
+}
+function pl(pts, arrow){
+  let s = `<polyline class="ln" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+  if (arrow) {
+    const [x1, y1] = pts[pts.length - 2], [x2, y2] = pts[pts.length - 1]; const a = 6; let tri;
+    if (x1 === x2) { const d = y2 > y1 ? 1 : -1; tri = [[x2, y2], [x2 - a * .6, y2 - a * d * 1.4], [x2 + a * .6, y2 - a * d * 1.4]]; }
+    else { const d = x2 > x1 ? 1 : -1; tri = [[x2, y2], [x2 - a * d * 1.4, y2 - a * .6], [x2 - a * d * 1.4, y2 + a * .6]]; }
+    s += `<polygon class="ah" points="${tri.map(p => p.join(',')).join(' ')}"/>`;
+  }
+  return s;
+}
+function absLabel(s){ return s.replace(/fabs\(([^()]*)\)/g, '|$1|'); }
+function condLabel(c){
+  let s = c.replace(/\|\|/g, ' կամ ').replace(/&&/g, ' և ');
+  s = absLabel(s).replace(/!=/g, '≠').replace(/<=/g, '≤').replace(/>=/g, '≥').replace(/==/g, '=').replace(/\s+/g, ' ').trim();
+  if (s.length > 22 && s.includes(' և ')) s = s.split(' և ').join(' և\n');
+  return s + ' ?';
+}
+function lay(n){ return n.t === 'if' ? layIf(n) : n.t === 'for' ? layFor(n) : layBlk(n); }
+function laySeq(ns){
+  const items = ns.map(lay);
+  return { wl: Math.max(...items.map(i => i.wl)), wr: Math.max(...items.map(i => i.wr)),
+    h: items.reduce((a, i) => a + i.h, 0) + V * (items.length - 1),
+    draw(x, y, o){ items.forEach((it, k) => { if (k) { o.push(pl([[x, y], [x, y + V]], true)); y += V; } y = it.draw(x, y, o); }); return y; } };
+}
+function layBlk(n){
+  const text = n.t === 'ret' ? 'Վերադարձ ' + n.e : n.t === 'term' ? n.text : absLabel(n.label);
+  const lines = text.split('\n').length;
+  const w = Math.max(130, tw(text) + (n.t === 'io' ? 56 : n.t === 'call' ? 46 : 32));
+  const h = BH + (lines - 1) * LH;
+  return { wl: w / 2, wr: w / 2, h, draw(x, y, o){
+    const cls = n.hl ? 'shp hl' : 'shp';
+    if (n.t === 'term' || n.t === 'ret') o.push(`<rect class="${cls}" x="${x - w / 2}" y="${y}" width="${w}" height="${h}" rx="${h / 2}"/>`);
+    else if (n.t === 'io') { const k = 14; o.push(`<polygon class="${cls}" points="${x - w / 2 + k},${y} ${x + w / 2},${y} ${x + w / 2 - k},${y + h} ${x - w / 2},${y + h}"/>`); }
+    else {
+      o.push(`<rect class="${cls}" x="${x - w / 2}" y="${y}" width="${w}" height="${h}"/>`);
+      if (n.t === 'call') { o.push(pl([[x - w / 2 + 9, y], [x - w / 2 + 9, y + h]])); o.push(pl([[x + w / 2 - 9, y], [x + w / 2 - 9, y + h]])); }
+    }
+    o.push(textSvg(x, y + h / 2, text, n.hl ? 'tx hlt' : 'tx')); return y + h; } };
+}
+function layIf(n){
+  const lbl = condLabel(n.cond); const lines = lbl.split('\n').length;
+  const dw = Math.max(150, tw(lbl) * 1.55 + 34), dh = 60 + (lines - 1) * LH * 1.4;
+  const yes = laySeq(n.yes), no = n.no.length ? laySeq(n.no) : null;
+  const offr = Math.max(dw / 2, yes.wl + 18), offl = Math.max(dw / 2, no ? no.wr + 18 : 0);
+  const bh = Math.max(yes.h, no ? no.h : 0); const h = dh + V + bh + V;
+  return { wl: offl + (no ? no.wl : 0), wr: offr + yes.wr, h, draw(x, y, o){
+    o.push(`<polygon class="shp${n.hl ? ' hl' : ''}" points="${x},${y} ${x + dw / 2},${y + dh / 2} ${x},${y + dh} ${x - dw / 2},${y + dh / 2}"/>`);
+    o.push(textSvg(x, y + dh / 2, lbl, n.hl ? 'tx hlt' : 'tx'));
+    const my = y + dh / 2, top = y + dh + V, mg = y + h, xr = x + offr, xl = x - offl;
+    o.push(pl([[x + dw / 2, my], [xr, my], [xr, top]], true));
+    o.push(`<text class="lb" x="${x + dw / 2 + 6}" y="${my - 7}">այո</text>`);
+    const yb = yes.draw(xr, top, o); o.push(pl([[xr, yb], [xr, mg], [x, mg]]));
+    o.push(no ? `<text class="lb" x="${x - dw / 2 - 6}" y="${my - 7}" text-anchor="end">ոչ</text>` : `<text class="lb" x="${x - dw / 2 + 6}" y="${my + 18}">ոչ</text>`);
+    if (no) { o.push(pl([[x - dw / 2, my], [xl, my], [xl, top]], true)); const yb2 = no.draw(xl, top, o); o.push(pl([[xl, yb2], [xl, mg], [x, mg]])); }
+    else o.push(pl([[x - dw / 2, my], [xl, my], [xl, mg], [x, mg]]));
+    o.push(`<circle class="dot" cx="${x}" cy="${mg}" r="3"/>`); return mg; } };
+}
+function layFor(n){
+  const lbl = `${n.v} = ${n.from}, ${n.to}`;
+  const hw = Math.max(140, tw(lbl) + 56), hh = BH; const body = laySeq(n.body);
+  const ll = Math.max(body.wl, hw / 2) + 22, rr = Math.max(body.wr, hw / 2) + 22;
+  const h = hh + V + body.h + V * .7 + V;
+  return { wl: ll, wr: rr, h, draw(x, y, o){
+    const k = 14;
+    o.push(`<polygon class="shp" points="${x - hw / 2},${y + hh / 2} ${x - hw / 2 + k},${y} ${x + hw / 2 - k},${y} ${x + hw / 2},${y + hh / 2} ${x + hw / 2 - k},${y + hh} ${x - hw / 2 + k},${y + hh}"/>`);
+    o.push(textSvg(x, y + hh / 2, lbl, 'tx'));
+    o.push(pl([[x, y + hh], [x, y + hh + V]], true));
+    const yb = body.draw(x, y + hh + V, o), yb2 = yb + V * .7;
+    o.push(pl([[x, yb], [x, yb2], [x - ll, yb2], [x - ll, y + hh / 2], [x - hw / 2, y + hh / 2]], true));
+    const ye = y + h; o.push(pl([[x + hw / 2, y + hh / 2], [x + rr, y + hh / 2], [x + rr, ye], [x, ye]]));
+    o.push(`<circle class="dot" cx="${x}" cy="${ye}" r="3"/>`); return ye; } };
+}
+function chartSVG(ns){
+  const s = laySeq(ns), padd = 14, W = Math.ceil(s.wl + s.wr + 2 * padd), Hh = Math.ceil(s.h + 2 * padd), o = [];
+  s.draw(padd + s.wl, padd, o);
+  return `<svg class="fc" viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Բլոկ-սխեմա">${o.join('')}</svg>`;
+}
+function charts(p){
+  const list = [{title:'Հիմնական ծրագիր', nodes:[T('Սկիզբ'), ...p.body, T('Վերջ')]}];
+  for (const s of (p.subs || [])) {
+    const isVoid = s.sig.startsWith('void');
+    const name = s.head.split('(')[0];
+    list.push({title:(isVoid ? 'Պրոցեդուրա ' : 'Ֆունկցիա ') + name, nodes:[T(s.head), ...s.body, ...(isVoid ? [T('Վերջ')] : [])]});
+  }
+  return list;
+}
+
+/* ---------- builders ---------- */
+const arrIn = (a = 'x') => IN(`Ներմուծում n, ${a}[1..n]`, ['cin >> n;', 'for (int i = 1; i <= n; i++)', `    cin >> ${a}[i];`]);
+const matIn = () => IN('Ներմուծում n, c[1..n][1..n]', ['cin >> n;', 'for (int i = 1; i <= n; i++)', '    for (int j = 1; j <= n; j++)', '        cin >> c[i][j];']);
+const inV = v => IN('Ներմուծում ' + v, ['cin >> ' + v.split(',').map(s => s.trim()).join(' >> ') + ';']);
+const outV = (expr, text) => OUT('Արտածում ' + expr, [`cout << "${text} = " << ${expr} << endl;`]);
+const NONE = OUT('Արտածում «Նման տարրեր չկան»', ['cout << "Նման տարրեր չկան" << endl;']);
+function acc(kind, E){
+  switch (kind) {
+    case 'sum': return {decl:['double s;'], init:[P('s = 0')], upd:[P(`s = s + ${E}`)], fin:[outV('s', 'S')]};
+    case 'prod': return {decl:['double p;'], init:[P('p = 1')], upd:[P(`p = p * ${E}`)], fin:[outV('p', 'P')]};
+    case 'count': return {decl:['int cnt;'], init:[P('cnt = 0')], upd:[P('cnt = cnt + 1')], fin:[outV('cnt', 'Քանակ')]};
+    case 'mean': return {decl:['double s;', 'int cnt;'], init:[P(['s = 0', 'cnt = 0'])], upd:[P([`s = s + ${E}`, 'cnt = cnt + 1'])],
+      fin:[IF('cnt > 0', [OUT('Արտածում s / cnt', ['cout << "Միջին = " << s / cnt << endl;'])], [NONE])]};
+    case 'rms': return {decl:['double s;', 'int cnt;'], init:[P(['s = 0', 'cnt = 0'])], upd:[P([`s = s + ${E} * ${E}`, 'cnt = cnt + 1'])],
+      fin:[IF('cnt > 0', [OUT('Արտածում sqrt(s / cnt)', ['cout << "Միջին քառակուսային = " << sqrt(s / cnt) << endl;'])], [NONE])]};
+  }
+}
+function agg1(o){
+  const a = acc(o.kind, o.E || 'x[i]');
+  const decl = ['int n;', `${o.type || 'double'} x[101];`];
+  if (o.ex) decl.push(`${o.ex[1]} ${o.ex[0]};`);
+  decl.push(...a.decl, ...(o.pd || []));
+  const body = [arrIn()];
+  if (o.ex) body.push(inV(o.ex[0]));
+  body.push(...a.init, FOR('i', '1', 'n', [...(o.pre || []), IF(o.cond, a.upd)]), ...a.fin);
+  return {decl, body};
+}
+function agg2(o){
+  const a = acc(o.kind, o.E || 'c[i][j]');
+  const decl = ['int n;', `${o.type || 'double'} c[11][11];`];
+  if (o.ex) decl.push(`${o.ex[1]} ${o.ex[0]};`);
+  decl.push(...a.decl);
+  const body = [matIn()];
+  if (o.ex) body.push(inV(o.ex[0]));
+  body.push(...a.init, FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF(o.cond, a.upd)])]), ...a.fin);
+  return {decl, body};
+}
+function idxP(cmp, outNode){
+  return {decl:['int n, k;', 'double x[101];'],
+    body:[arrIn(), P('k = 1'), FOR('i', '2', 'n', [IF(`x[i] ${cmp} x[k]`, [P('k = i')])]), outNode]};
+}
+const printY = () => IF('m == 0', [OUT('Արտածում «Վեկտորը դատարկ է»', ['cout << "Վեկտորը դատարկ է" << endl;'])], [FOR('i', '1', 'm', [OUT('Արտածում y[i]', ['cout << y[i] << " ";'])])]);
+function newVec(o){
+  const decl = ['int n, m;', `${o.type || 'double'} x[101], y[101];`];
+  if (o.ex) decl.push(`${o.ex[1]} ${o.ex[0]};`);
+  const body = [arrIn()];
+  if (o.ex) body.push(inV(o.ex[0]));
+  body.push(P('m = 0'), FOR('i', '1', 'n', [IF(o.cond, [P(['m = m + 1', 'y[m] = x[i]'])])]), printY());
+  return {decl, body};
+}
+
+/* ---------- subprograms ---------- */
+const m3 = (name, op, proc) => ({
+  sig: proc ? `void ${name}(double x, double y, double z, double &m)` : `double ${name}(double x, double y, double z)`,
+  head: proc ? `${name}(x, y, z, m)` : `${name}(x, y, z)`,
+  decl: proc ? [] : ['double m;'],
+  body: [P('m = x'), IF(`y ${op} m`, [P('m = y')]), IF(`z ${op} m`, [P('m = z')]), ...(proc ? [] : [RET('m')])]
+});
+const MAX3 = m3('max3', '>', false), MIN3 = m3('min3', '<', false), MAX3P = m3('max3', '>', true), MIN3P = m3('min3', '<', true);
+const PHI = (args, sigArgs, f) => ({sig:`double phi(${sigArgs})`, head:`phi(${args})`, body:[RET(f)]});
+const PHIP = (args, sigArgs, f) => ({sig:`void phi(${sigArgs}, double &f)`, head:`phi(${args}, f)`, body:[P('f = ' + f)]});
+const INPUT = {sig:'void input(int &n, double x[])', head:'input(n, x)', body:[arrIn()]};
+const OUTPUT = {sig:'void output(int m, double y[])', head:'output(m, y)', body:[FOR('i', '1', 'm', [OUT('Արտածում y[i]', ['cout << y[i] << " ";'])])]};
+const MAXF = {sig:'double maxArr(int n, double x[])', head:'maxArr(n, x)', decl:['double m;'], body:[P('m = x[1]'), FOR('i', '2', 'n', [IF('x[i] > m', [P('m = x[i]')])]), RET('m')]};
+const MINF = {sig:'double minArr(int n, double x[])', head:'minArr(n, x)', decl:['double m;'], body:[P('m = x[1]'), FOR('i', '2', 'n', [IF('x[i] < m', [P('m = x[i]')])]), RET('m')]};
+const outOrEmpty = () => IF('m == 0', [OUT('Արտածում «Վեկտորը դատարկ է»', ['cout << "Վեկտորը դատարկ է" << endl;'])], [CALL('output(m, y)')]);
+function mm(fn, ins, vars, a1, a2, last, outName){
+  // two calls of max3/min3 (function form) then final formula
+  return {decl:[`double ${vars}, m1, m2, ${outName};`], subs:[fn],
+    body:[inV(ins), CALL(`m1 = ${fn.head.split('(')[0]}(${a1})`), CALL(`m2 = ${fn.head.split('(')[0]}(${a2})`), P(`${outName} = ${last}`), outV(outName, outName)]};
+}
+function mmp(fn, ins, vars, a1, a2, last, outName){
+  const nm = fn.head.split('(')[0];
+  return {decl:[`double ${vars}, m1, m2, ${outName};`], subs:[fn],
+    body:[inV(ins), CALL(`${nm}(${a1}, m1)`), CALL(`${nm}(${a2}, m2)`), P(`${outName} = ${last}`), outV(outName, outName)]};
+}
+function phiF(sub, xy, call, zf, extraDecl){
+  return {decl:['double x, y, a, f, z;'], subs:[sub],
+    body:[P(xy), inV('a'), CALL(`f = phi(${call})`), P(`z = ${zf}`), outV('z', 'z')]};
+}
+function phiP(sub, xy, call, zf){
+  return {decl:['double x, y, a, f, z;'], subs:[sub],
+    body:[P(xy), inV('a'), CALL(`phi(${call}, f)`), P(`z = ${zf}`), outV('z', 'z')]};
+}
+const ADD = P(['m = m + 1', 'y[m] = x[i]']);
+
+/* ---------- problems ---------- */
+const PR = [];
+const add = (id, ru, spec, note) => PR.push({id, ru, note, ...spec});
+const VEC = 'Նոր Y վեկտոր X-ի ';
+
+// 221–240 (իրական թվեր)
+add(221, 'Դրական տարրերի միջին թվաբանականը', agg1({kind:'mean', cond:'x[i] > 0'}));
+add(222, 'Դրական տարրերի միջին քառակուսայինը', agg1({kind:'rms', cond:'x[i] > 0'}));
+add(223, 'Բացասական տարրերի միջին քառակուսայինը', agg1({kind:'rms', cond:'x[i] < 0'}));
+add(224, 'Բացասական տարրերի միջին թվաբանականը', agg1({kind:'mean', cond:'x[i] < 0'}));
+add(225, 'Զույգ ինդեքսով տարրերի գումարը', agg1({kind:'sum', cond:'i % 2 == 0'}));
+add(226, 'Զույգ ինդեքսով տարրերի արտադրյալը', agg1({kind:'prod', cond:'i % 2 == 0'}));
+add(227, 'Կենտ ինդեքսով տարրերի քառակուսիների արտադրյալը', agg1({kind:'prod', cond:'i % 2 != 0', E:'x[i] * x[i]'}));
+add(228, 'Կենտ ինդեքսով տարրերի բացարձակ արժեքների գումարը', agg1({kind:'sum', cond:'i % 2 != 0', E:'fabs(x[i])'}));
+add(229, 'k-ին բազմապատիկ ինդեքսով տարրերի քանակը', agg1({kind:'count', cond:'i % k == 0', ex:['k', 'int']}));
+add(230, 'Դրական և բացասական տարրերի քանակները', {decl:['int n, kp, kn;', 'double x[101];'],
+  body:[arrIn(), P(['kp = 0', 'kn = 0']), FOR('i', '1', 'n', [IF('x[i] > 0', [P('kp = kp + 1')]), IF('x[i] < 0', [P('kn = kn + 1')])]),
+    OUT('Արտածում kp, kn', ['cout << "Դրական՝ " << kp << ", բացասական՝ " << kn << endl;'])]});
+add(231, '[a; b] միջակայքին պատկանող տարրերի գումարը', agg1({kind:'sum', cond:'x[i] >= a && x[i] <= b', ex:['a, b', 'double']}));
+add(232, '[c; d) միջակայքին պատկանող տարրերի արտադրյալը', agg1({kind:'prod', cond:'x[i] >= c && x[i] < d', ex:['c, d', 'double']}));
+add(233, '(a; b) միջակայքին պատկանող տարրերի քանակը', agg1({kind:'count', cond:'x[i] > a && x[i] < b', ex:['a, b', 'double']}));
+add(234, 'Բացարձակ արժեքով k-ից փոքր տարրերի խորանարդների գումարը', agg1({kind:'sum', cond:'fabs(x[i]) < k', E:'x[i] * x[i] * x[i]', ex:['k', 'double']}));
+add(235, 'Բացարձակ արժեքով t-ից փոքր տարրերի արտադրյալը', agg1({kind:'prod', cond:'fabs(x[i]) < t', ex:['t', 'double']}));
+add(236, 'Բացարձակ արժեքով k-ից փոքր տարրերի քանակը', agg1({kind:'count', cond:'fabs(x[i]) < k', ex:['k', 'double']}));
+add(237, 'k-ին բազմապատիկ ինդեքսով տարրերի միջին թվաբանականը', agg1({kind:'mean', cond:'i % k == 0', ex:['k', 'int']}));
+add(238, 'Այն տարրերի գումարը, որոնց ինդեքսն առանց մնացորդի բաժանվում է k-ի', agg1({kind:'sum', cond:'i % k == 0', ex:['k', 'int']}));
+add(239, 'Այն տարրերի արտադրյալը, որոնց արժեքի և ինդեքսի տարբերությունը դրական է', agg1({kind:'prod', cond:'x[i] - i > 0'}));
+add(240, 'Այն տարրերի միջին քառակուսայինը, որոնց ամբողջ մասը բազմապատիկ է k-ին', agg1({kind:'rms', cond:'(int)x[i] % k == 0', ex:['k', 'int']}));
+// 241–260 (ամբողջ թվեր)
+const I = 'int';
+add(241, 'Զույգ տարրերի քառակուսիների գումարը', agg1({type:I, kind:'sum', cond:'x[i] % 2 == 0', E:'x[i] * x[i]'}));
+add(242, 'Զույգ տարրերի քանակը', agg1({type:I, kind:'count', cond:'x[i] % 2 == 0'}));
+add(243, 'Զույգ տարրերի արտադրյալը և գումարը', {decl:['int n;', 'int x[101];', 'double s, p;'],
+  body:[arrIn(), P(['s = 0', 'p = 1']), FOR('i', '1', 'n', [IF('x[i] % 2 == 0', [P(['s = s + x[i]', 'p = p * x[i]'])])]),
+    OUT('Արտածում p, s', ['cout << "P = " << p << ", S = " << s << endl;'])]});
+add(244, 'Կենտ տարրերի միջին թվաբանականը', agg1({type:I, kind:'mean', cond:'x[i] % 2 != 0'}));
+add(245, 'Կենտ տարրերի միջին քառակուսայինը', agg1({type:I, kind:'rms', cond:'x[i] % 2 != 0'}));
+add(246, 'Կենտ տարրերի քանակը և արտադրյալը', {decl:['int n, cnt;', 'int x[101];', 'double p;'],
+  body:[arrIn(), P(['cnt = 0', 'p = 1']), FOR('i', '1', 'n', [IF('x[i] % 2 != 0', [P(['cnt = cnt + 1', 'p = p * x[i]'])])]),
+    OUT('Արտածում cnt, p', ['cout << "Քանակ = " << cnt << ", P = " << p << endl;'])]});
+add(247, 'Զրոյական տարրերի քանակը', agg1({type:I, kind:'count', cond:'x[i] == 0'}));
+add(248, '3-ին բազմապատիկ տարրերի միջին թվաբանականը', agg1({type:I, kind:'mean', cond:'x[i] % 3 == 0'}));
+add(249, '5-ին բազմապատիկ տարրերի միջին քառակուսայինը', agg1({type:I, kind:'rms', cond:'x[i] % 5 == 0'}));
+add(250, '7-ին բազմապատիկ տարրերի քանակը', agg1({type:I, kind:'count', cond:'x[i] % 7 == 0'}));
+add(251, 'k-ին բազմապատիկ տարրերի գումարը', agg1({type:I, kind:'sum', cond:'x[i] % k == 0', ex:['k', 'int']}));
+add(252, 'm-ին բազմապատիկ տարրերի արտադրյալը', agg1({type:I, kind:'prod', cond:'x[i] % m == 0', ex:['m', 'int']}));
+add(253, 't-ին բազմապատիկ տարրերի քանակը', agg1({type:I, kind:'count', cond:'x[i] % t == 0', ex:['t', 'int']}));
+add(254, 'Այն տարրերի արտադրյալը, որոնք 5-ի բաժանելիս տալիս են 2 մնացորդ', agg1({type:I, kind:'prod', cond:'x[i] % 5 == 2'}));
+add(255, 'Այն տարրերի քառակուսիների գումարը, որոնց արժեքի և ինդեքսի գումարը բաժանվում է 3-ի', agg1({type:I, kind:'sum', cond:'(x[i] + i) % 3 == 0', E:'x[i] * x[i]'}));
+add(256, 'Այն տարրերի միջին թվաբանականը, որոնց ինդեքսը որևէ բնական թվի քառակուսի է', agg1({type:I, kind:'mean', cond:'r * r == i', pre:[P('r = (int)sqrt(i)')], pd:['int r;']}),
+  'i ինդեքսը քառակուսի է, եթե նրա արմատն ամբողջ է՝ r = (int)sqrt(i) և r * r == i։');
+add(257, 'Այն տարրերի միջին քառակուսայինը, որոնց արժեքը մեծ է ինդեքսից', agg1({type:I, kind:'rms', cond:'x[i] > i'}));
+add(258, 'Այն տարրերի գումարը, որոնց արժեքի և ինդեքսի գումարի քառակուսին բաժանվում է k-ի', agg1({type:I, kind:'sum', cond:'(x[i] + i) * (x[i] + i) % k == 0', ex:['k', 'int']}));
+add(259, 'Այն տարրերի քանակը, որոնց արժեքի և ինդեքսի տարբերությունը բացարձակ արժեքով մեծ է k-ից', agg1({type:I, kind:'count', cond:'fabs(x[i] - i) > k', ex:['k', 'int']}));
+add(260, 'Այն տարրերի քառակուսիների արտադրյալը, որոնց արժեքի և ինդեքսի արտադրյալը 3-ի բաժանելիս տալիս է 2 մնացորդ', agg1({type:I, kind:'prod', cond:'x[i] * i % 3 == 2', E:'x[i] * x[i]'}));
+// 261–270
+add(261, 'Մեծագույն տարրը', {decl:['int n;', 'double x[101], mx;'], body:[arrIn(), P('mx = x[1]'), FOR('i', '2', 'n', [IF('x[i] > mx', [P('mx = x[i]')])]), outV('mx', 'max')]});
+add(262, 'Փոքրագույն տարրը', {decl:['int n;', 'double x[101], mn;'], body:[arrIn(), P('mn = x[1]'), FOR('i', '2', 'n', [IF('x[i] < mn', [P('mn = x[i]')])]), outV('mn', 'min')]});
+add(263, 'Մեծագույն և փոքրագույն տարրերի գումարը', {decl:['int n;', 'double x[101], mx, mn;'],
+  body:[arrIn(), P(['mx = x[1]', 'mn = x[1]']), FOR('i', '2', 'n', [IF('x[i] > mx', [P('mx = x[i]')]), IF('x[i] < mn', [P('mn = x[i]')])]), outV('mx + mn', 'max + min')]});
+add(264, 'Մեծագույն և փոքրագույն տարրերի արտադրյալը', {decl:['int n;', 'double x[101], mx, mn;'],
+  body:[arrIn(), P(['mx = x[1]', 'mn = x[1]']), FOR('i', '2', 'n', [IF('x[i] > mx', [P('mx = x[i]')]), IF('x[i] < mn', [P('mn = x[i]')])]), outV('mx * mn', 'max * min')]});
+add(265, 'Մեծագույն տարրի և նրա համարի գումարը (մեծագույնը մեկն է)', idxP('>', outV('x[k] + k', 'Գումար')));
+add(266, 'Փոքրագույն տարրի և նրա համարի գումարը (փոքրագույնը մեկն է)', idxP('<', outV('x[k] + k', 'Գումար')));
+add(267, 'Առաջին մեծագույն տարրի համարը', idxP('>', outV('k', 'Համար')));
+add(268, 'Վերջին մեծագույն տարրի համարը', idxP('>=', outV('k', 'Համար')), '>= նշանը «անցնում է» յուրաքանչյուր հաջորդ հավասար մեծագույնին, ուստի մնում է վերջինը։');
+add(269, 'Առաջին փոքրագույն տարրի համարը', idxP('<', outV('k', 'Համար')));
+add(270, 'Վերջին փոքրագույն տարրի համարը', idxP('<=', outV('k', 'Համար')));
+// 291–300
+add(291, VEC + 'դրական տարրերից', newVec({cond:'x[i] > 0'}));
+add(292, VEC + 'դրական և բացասական (ոչ զրոյական) տարրերից', newVec({cond:'x[i] != 0'}));
+add(293, VEC + 'կենտ տարրերից', newVec({type:I, cond:'x[i] % 2 != 0'}));
+add(294, VEC + '[a; b] միջակայքին պատկանող տարրերից', newVec({cond:'x[i] >= a && x[i] <= b', ex:['a, b', 'double']}));
+add(295, VEC + 'p-ին բազմապատիկ տարրերից', newVec({type:I, cond:'x[i] % p == 0', ex:['p', 'int']}));
+add(296, VEC + 'զույգ տարրերից', newVec({type:I, cond:'x[i] % 2 == 0'}));
+add(297, VEC + 'այն տարրերից, որոնց ինդեքսը հավասար չէ արժեքին', newVec({cond:'x[i] != i'}));
+add(298, VEC + 'կենտ ինդեքսով տարրերից', newVec({cond:'i % 2 != 0'}));
+add(299, VEC + 'այն տարրերից, որոնց քառակուսիները պատկանում են (c; d)-ին', newVec({cond:'x[i] * x[i] > c && x[i] * x[i] < d', ex:['c, d', 'double']}));
+add(300, VEC + 'այն տարրերից, որոնք 6-ի բաժանելիս տալիս են 1 մնացորդ', newVec({type:I, cond:'x[i] % 6 == 1'}));
+
+// 411–440
+const GL = 'Գլխավոր անկյունագծից ', OZ = 'Օժանդակ անկյունագծից ';
+add(411, GL + 'ներքև գտնվող՝ k-ին բազմապատիկ տարրերի քանակը', agg2({type:I, kind:'count', cond:'i > j && c[i][j] % k == 0', ex:['k', 'int']}));
+add(412, GL + 'ներքև գտնվող՝ 5-ին բազմապատիկ տարրերի միջին թվաբանականը', agg2({type:I, kind:'mean', cond:'i > j && c[i][j] % 5 == 0'}));
+add(413, GL + 'ներքև կամ նրա վրա գտնվող զույգ տարրերի միջին քառակուսայինը', agg2({type:I, kind:'rms', cond:'i >= j && c[i][j] % 2 == 0'}));
+add(414, GL + 'ներքև կամ նրա վրա գտնվող կենտ տարրերի միջին թվաբանականը', agg2({type:I, kind:'mean', cond:'i >= j && c[i][j] % 2 != 0'}));
+add(415, GL + 'ներքև գտնվող զույգ տարրերի քանակը', agg2({type:I, kind:'count', cond:'i > j && c[i][j] % 2 == 0'}));
+add(416, OZ + 'վերև գտնվող զույգ տարրերի գումարը', agg2({type:I, kind:'sum', cond:'i + j < n + 1 && c[i][j] % 2 == 0'}));
+add(417, OZ + 'վերև կամ նրա վրա գտնվող՝ k-ին բազմապատիկ տարրերի արտադրյալը', agg2({type:I, kind:'prod', cond:'i + j <= n + 1 && c[i][j] % k == 0', ex:['k', 'int']}));
+add(418, OZ + 'վերև կամ նրա վրա գտնվող զրոյական տարրերի քանակը', agg2({type:I, kind:'count', cond:'i + j <= n + 1 && c[i][j] == 0'}));
+add(419, GL + 'վերև կամ նրա վրա գտնվող այն տարրերի քանակը, որոնք 5-ի բաժանելիս տալիս են 2 մնացորդ', agg2({type:I, kind:'count', cond:'i <= j && c[i][j] % 5 == 2'}));
+add(420, GL + 'ներքև կամ նրա վրա գտնվող զույգ տարրերի միջին թվաբանականը', agg2({type:I, kind:'mean', cond:'i >= j && c[i][j] % 2 == 0'}));
+add(421, OZ + 'ներքև կամ նրա վրա գտնվող՝ կենտ ինդեքսների գումարով տարրերի քանակը', agg2({kind:'count', cond:'i + j >= n + 1 && (i + j) % 2 != 0'}));
+add(422, OZ + 'վերև կամ նրա վրա գտնվող՝ կենտ ինդեքսների գումարով տարրերի միջին քառակուսայինը', agg2({kind:'rms', cond:'i + j <= n + 1 && (i + j) % 2 != 0'}));
+add(423, OZ + 'վերև գտնվող՝ [a; b]-ին պատկանող տարրերի քանակը', agg2({kind:'count', cond:'i + j < n + 1 && c[i][j] >= a && c[i][j] <= b', ex:['a, b', 'double']}));
+add(424, OZ + 'ներքև կամ նրա վրա գտնվող այն տարրերի գումարը, որոնց բացարձակ արժեքը պատկանում է [5,4; 15,3]-ին', agg2({kind:'sum', cond:'i + j >= n + 1 && fabs(c[i][j]) >= 5.4 && fabs(c[i][j]) <= 15.3'}));
+add(425, OZ + 'վերև գտնվող այն տարրերի քանակը, որոնց ամբողջ մասը բազմապատիկ է 5-ին', agg2({kind:'count', cond:'i + j < n + 1 && (int)c[i][j] % 5 == 0'}));
+add(426, GL + 'ներքև գտնվող՝ [a; b]-ին պատկանող տարրերի միջին թվաբանականը', agg2({kind:'mean', cond:'i > j && c[i][j] >= a && c[i][j] <= b', ex:['a, b', 'double']}));
+add(427, GL + 'ներքև կամ նրա վրա գտնվող ամբողջ արժեքով տարրերի միջին քառակուսայինը', agg2({kind:'rms', cond:'i >= j && c[i][j] == (int)c[i][j]'}), 'Տարրն ամբողջ է, եթե հավասար է իր ամբողջ մասին։');
+add(428, GL + 'ներքև՝ զույգ համարով սյուներում գտնվող դրական տարրերի քանակը', agg2({kind:'count', cond:'i > j && c[i][j] > 0 && j % 2 == 0'}));
+add(429, GL + 'վերև գտնվող՝ կենտ ինդեքսների գումարով տարրերի արտադրյալը', agg2({kind:'prod', cond:'i < j && (i + j) % 2 != 0'}));
+add(430, GL + 'վերև գտնվող՝ զույգ ինդեքսների գումարով տարրերի գումարը', agg2({kind:'sum', cond:'i < j && (i + j) % 2 == 0'}));
+add(431, GL + 'վերև գտնվող դրական տարրերի միջին քառակուսայինը', agg2({kind:'rms', cond:'i < j && c[i][j] > 0'}));
+add(432, OZ + 'վերև գտնվող բացասական տարրերի միջին թվաբանականը', agg2({kind:'mean', cond:'i + j < n + 1 && c[i][j] < 0'}));
+add(433, GL + 'վերև գտնվող զրոյական տարրերի քանակը', agg2({kind:'count', cond:'i < j && c[i][j] == 0'}));
+add(434, GL + 'վերև՝ կենտ համարով տողերում գտնվող բացասական տարրերի քանակը', agg2({kind:'count', cond:'i < j && c[i][j] < 0 && i % 2 != 0'}));
+add(435, GL + 'ներքև գտնվող՝ բացարձակ արժեքով k-ից մեծ տարրերի քանակը', agg2({kind:'count', cond:'i > j && fabs(c[i][j]) > k', ex:['k', 'double']}));
+add(436, GL + 'վերև կամ նրա վրա գտնվող՝ [a; b]-ին պատկանող տարրերի գումարը', agg2({kind:'sum', cond:'i <= j && c[i][j] >= a && c[i][j] <= b', ex:['a, b', 'double']}));
+add(437, OZ + 'ներքև կամ նրա վրա գտնվող՝ a-ից փոքր տարրերի արտադրյալը', agg2({kind:'prod', cond:'i + j >= n + 1 && c[i][j] < a', ex:['a', 'double']}));
+add(438, GL + 'վերև կամ նրա վրա գտնվող՝ զույգ ինդեքսների գումարով տարրերի միջին թվաբանականը', agg2({kind:'mean', cond:'i <= j && (i + j) % 2 == 0'}));
+add(439, OZ + 'վերև գտնվող այն տարրերի գումարը, որոնց ամբողջ մասը բազմապատիկ է 4-ին', agg2({kind:'sum', cond:'i + j < n + 1 && (int)c[i][j] % 4 == 0'}));
+add(440, OZ + 'ներքև գտնվող տարրերի կոտորակային մասերի գումարը', agg2({kind:'sum', cond:'i + j > n + 1', E:'(c[i][j] - (int)c[i][j])'}), 'Կոտորակային մաս = թիվը հանած նրա ամբողջ մասը։');
+
+// 591–600
+const RES = 'Պատասխանը կոչված է res, որովհետև y-ը արդեն զբաղված է մուտքային թվով։';
+add(591, 'y = max(a, a+b, a−b) + max(b, 2b−a, b+2a). max-ը՝ ֆունկցիայով', mm(MAX3, 'a, b', 'a, b', 'a, a + b, a - b', 'b, 2 * b - a, b + 2 * a', 'm1 + m2', 'y'));
+add(592, 'y = min(3a, 2b, c) · min(a, b, 3c). min-ը՝ ֆունկցիայով', mm(MIN3, 'a, b, c', 'a, b, c', '3 * a, 2 * b, c', 'a, b, 3 * c', 'm1 * m2', 'y'));
+add(593, 'y = max(5, a, b) + max(7, b, a+b). max-ը՝ ֆունկցիայով', mm(MAX3, 'a, b', 'a, b', '5, a, b', '7, b, a + b', 'm1 + m2', 'y'));
+add(594, 'y = max²(5+a, b, 3) · max(3+a, b, c). max-ը՝ ֆունկցիայով', mm(MAX3, 'a, b, c', 'a, b, c', '5 + a, b, 3', '3 + a, b, c', 'm1 * m1 * m2', 'y'), 'Խնդրագրքում «max2»-ը մեծագույնի քառակուսին է։');
+add(595, 'y = (min(3,4+5a, b, c) + min(0,5, a, c))². min-ը՝ ֆունկցիայով', mm(MIN3, 'a, b, c', 'a, b, c', '3.4 + 5 * a, b, c', '0.5, a, c', '(m1 + m2) * (m1 + m2)', 'y'), 'C++-ում կոտորակային մասն անջատվում է կետով՝ 3.4, 0.5։');
+add(596, 'y = max(3, a+b, c) − max(a+b, b+c, a+c). max-ը՝ պրոցեդուրայով', mmp(MAX3P, 'a, b, c', 'a, b, c', '3, a + b, c', 'a + b, b + c, a + c', 'm1 - m2', 'y'));
+add(597, 'y = e^(min(2, a+b, b+c) + min(a, b, c)). min-ը՝ պրոցեդուրայով', mmp(MIN3P, 'a, b, c', 'a, b, c', '2, a + b, b + c', 'a, b, c', 'exp(m1 + m2)', 'y'));
+add(598, 'y = (max(x, x+1, x+y+z) − max(x, z, y−1))². max-ը՝ պրոցեդուրայով', mmp(MAX3P, 'x, y, z', 'x, y, z', 'x, x + 1, x + y + z', 'x, z, y - 1', '(m1 - m2) * (m1 - m2)', 'res'), RES);
+add(599, 'y = sin(min(x, x+1, x+y+z)) + cos(min(5, x+y, z)). min-ը՝ պրոցեդուրայով', mmp(MIN3P, 'x, y, z', 'x, y, z', 'x, x + 1, x + y + z', '5, x + y, z', 'sin(m1) + cos(m2)', 'res'), RES);
+add(600, 'y = tg(min(x, y, x+y) − min(2, x, x−y)). min-ը՝ պրոցեդուրայով', mmp(MIN3P, 'x, y', 'x, y', 'x, y, x + y', '2, x, x - y', 'tan(m1 - m2)', 'res'), RES);
+// 601–605 φ՝ ֆունկցիայով
+add(601, 'z = a(x²+y²)φ²(x,y), x = 2, y = 5, φ = log₂(x+y). φ-ն՝ ֆունկցիայով', phiF(PHI('x, y', 'double x, double y', 'log2(x + y)'), ['x = 2', 'y = 5'], 'x, y', 'a * (x * x + y * y) * f * f'));
+add(602, 'z = a·sin²(x)(φ²(x,y)+1), x = 0,28, y = 7, φ = tg(x²+y). φ-ն՝ ֆունկցիայով', phiF(PHI('x, y', 'double x, double y', 'tan(x * x + y)'), ['x = 0.28', 'y = 7'], 'x, y', 'a * sin(x) * sin(x) * (f * f + 1)'));
+add(603, 'z = e^φ(x,y) + x⁴ + 4a², x = 1, y = 3x, φ = sin(xy). φ-ն՝ ֆունկցիայով', phiF(PHI('x, y', 'double x, double y', 'sin(x * y)'), ['x = 1', 'y = 3 * x'], 'x, y', 'exp(f) + x * x * x * x + 4 * a * a'));
+add(604, 'z = φ(x,y)(a²+y)³, x = 2,1, y = 2x, φ = log₃(a²+y). φ-ն՝ ֆունկցիայով', phiF(PHI('a, y', 'double a, double y', 'log(a * a + y) / log(3)'), ['x = 2.1', 'y = 2 * x'], 'a, y', 'f * (a * a + y) * (a * a + y) * (a * a + y)'), 'φ-ի բանաձևում a կա, ուստի ֆունկցիային փոխանցում ենք a-ն և y-ը։ log₃ t = log(t) / log(3)։');
+add(605, 'z = cos²(x)(φ²(x,y)+1), x = −2,3, y = x³, φ = sin(x+ay). φ-ն՝ ֆունկցիայով', phiF(PHI('x, y, a', 'double x, double y, double a', 'sin(x + a * y)'), ['x = -2.3', 'y = x * x * x'], 'x, y, a', 'cos(x) * cos(x) * (f * f + 1)'), 'φ-ի բանաձևում a կա, ուստի այն փոխանցում ենք երրորդ պարամետրով։');
+// 606–610 φ՝ պրոցեդուրայով
+add(606, 'z = arctg(a+φ²(x,y)), x = 0,7, y = x², φ = tg(xy). φ-ն՝ պրոցեդուրայով', phiP(PHIP('x, y', 'double x, double y', 'tan(x * y)'), ['x = 0.7', 'y = x * x'], 'x, y', 'atan(a + f * f)'));
+add(607, 'z = (a+y)²φ²(x,y), x = 2,24, y = 2, φ = ctg(x²y). φ-ն՝ պրոցեդուրայով', phiP(PHIP('x, y', 'double x, double y', '1 / tan(x * x * y)'), ['x = 2.24', 'y = 2'], 'x, y', '(a + y) * (a + y) * f * f'), 'ctg t = 1 / tan(t)։');
+add(608, 'z = φ(x,y) + a², x = −3,18, y = 5+4x, φ = log₂(x²+y). φ-ն՝ պրոցեդուրայով', phiP(PHIP('x, y', 'double x, double y', 'log2(x * x + y)'), ['x = -3.18', 'y = 5 + 4 * x'], 'x, y', 'f + a * a'));
+add(609, 'z = e^φ(x,y)(a⁴+4x²), x = 2,6, y = 5x, φ = log₄(x²+4y). φ-ն՝ պրոցեդուրայով', phiP(PHIP('x, y', 'double x, double y', 'log(x * x + 4 * y) / log(4)'), ['x = 2.6', 'y = 5 * x'], 'x, y', 'exp(f) * (a * a * a * a + 4 * x * x)'), 'log₄ t = log(t) / log(4)։');
+add(610, 'z = (φ³(x,y)+4xy)(x²+y), x = 4,6, y = 2x, φ = log₃(x²+y). φ-ն՝ պրոցեդուրայով', phiP(PHIP('x, y', 'double x, double y', 'log(x * x + y) / log(3)'), ['x = 4.6', 'y = 2 * x'], 'x, y', '(f * f * f + 4 * x * y) * (x * x + y)'));
+// 611–625
+const IO2 = 'ներմուծումը և արտածումը՝ պրոցեդուրաներով';
+add(611, 'Դրական տարրերի միջին թվաբանականը. ներմուծումը՝ պրոցեդուրայով, միջինը՝ ֆունկցիայով', {decl:['int n;', 'double x[101], sr;'],
+  subs:[INPUT, {sig:'double mean(int n, double x[])', head:'mean(n, x)', decl:['double s, r;', 'int cnt;'],
+    body:[P(['s = 0', 'cnt = 0']), FOR('i', '1', 'n', [IF('x[i] > 0', [P(['s = s + x[i]', 'cnt = cnt + 1'])])]), P('r = 0'), IF('cnt > 0', [P('r = s / cnt')]), RET('r')]}],
+  body:[CALL('input(n, x)'), CALL('sr = mean(n, x)'), outV('sr', 'Միջին')]}, 'Եթե դրական տարրեր չկան, ֆունկցիան կվերադարձնի 0։');
+add(612, 'Նոր վեկտոր ոչ դրական տարրերից. ' + IO2, {decl:['int n, m;', 'double x[101], y[101];'], subs:[INPUT, OUTPUT],
+  body:[CALL('input(n, x)'), P('m = 0'), FOR('i', '1', 'n', [IF('x[i] <= 0', [ADD])]), outOrEmpty()]});
+add(613, 'Մեծագույն տարրը. ներմուծումը՝ պրոցեդուրայով, մեծագույնը՝ ֆունկցիայով', {decl:['int n;', 'double x[101], mx;'], subs:[INPUT, MAXF],
+  body:[CALL('input(n, x)'), CALL('mx = maxArr(n, x)'), outV('mx', 'max')]});
+add(614, 'Նոր վեկտոր՝ առանց այն տարրերի, որոնց ամբողջ մասը բազմապատիկ է k-ին. ' + IO2, {decl:['int n, m, k;', 'double x[101], y[101];'], subs:[INPUT, OUTPUT],
+  body:[CALL('input(n, x)'), inV('k'), P('m = 0'), FOR('i', '1', 'n', [IF('(int)x[i] % k != 0', [ADD])]), outOrEmpty()]});
+add(615, '[a; b]-ին պատկանող տարրերի գումարը. ամբողջ ներմուծումը՝ պրոցեդուրայով, գումարը՝ ֆունկցիայով', {decl:['int n;', 'double x[101], a, b, s;'],
+  subs:[{sig:'void input(int &n, double x[], double &a, double &b)', head:'input(n, x, a, b)', body:[arrIn(), inV('a, b')]},
+    {sig:'double sumAB(int n, double x[], double a, double b)', head:'sumAB(n, x, a, b)', decl:['double s;'],
+      body:[P('s = 0'), FOR('i', '1', 'n', [IF('x[i] >= a && x[i] <= b', [P('s = s + x[i]')])]), RET('s')]}],
+  body:[CALL('input(n, x, a, b)'), CALL('s = sumAB(n, x, a, b)'), outV('s', 'S')]});
+add(616, 'Մեծագույն և փոքրագույն տարրերը. երկուսն էլ՝ ֆունկցիաներով', {decl:['int n;', 'double x[101], mx, mn;'], subs:[MAXF, MINF],
+  body:[arrIn(), CALL('mx = maxArr(n, x)'), CALL('mn = minArr(n, x)'), OUT('Արտածում mx, mn', ['cout << "max = " << mx << ", min = " << mn << endl;'])]});
+add(617, 'Նոր վեկտոր այն տարրերից, որոնց ամբողջ մասը բազմապատիկ է k-ին. ' + IO2, {decl:['int n, m, k;', 'double x[101], y[101];'], subs:[INPUT, OUTPUT],
+  body:[CALL('input(n, x)'), inV('k'), P('m = 0'), FOR('i', '1', 'n', [IF('(int)x[i] % k == 0', [ADD])]), outOrEmpty()]});
+add(618, 'Առաջին մեծագույն տարրին հաջորդող տարրերի գումարը. մեծագույնի համարը՝ ֆունկցիայով, ներմուծումը՝ պրոցեդուրայով', {decl:['int n, k;', 'double x[101], s;'],
+  subs:[INPUT, {sig:'int firstMax(int n, double x[])', head:'firstMax(n, x)', decl:['int k;'], body:[P('k = 1'), FOR('i', '2', 'n', [IF('x[i] > x[k]', [P('k = i')])]), RET('k')]}],
+  body:[CALL('input(n, x)'), CALL('k = firstMax(n, x)'), P('s = 0'), FOR('i', 'k + 1', 'n', [P('s = s + x[i]')]), outV('s', 'S')]}, 'Եթե մեծագույնը վերջինն է, ցիկլը չի կատարվի, և S = 0։');
+add(619, 'Նոր զանգված վերջին փոքրագույն տարրին նախորդող տարրերից. ներմուծումը և կառուցումը՝ պրոցեդուրաներով', {decl:['int n, m;', 'double x[101], y[101];'],
+  subs:[INPUT, {sig:'void build(int n, double x[], int &m, double y[])', head:'build(n, x, m, y)', decl:['int k;'],
+    body:[P('k = 1'), FOR('i', '2', 'n', [IF('x[i] <= x[k]', [P('k = i')])]), P('m = 0'), FOR('i', '1', 'k - 1', [ADD])]}],
+  body:[CALL('input(n, x)'), CALL('build(n, x, m, y)'), printY()]});
+add(620, 'Բոլոր մեծագույն տարրերի համարների արտադրյալը. մեծագույնը և արտադրյալը՝ ֆունկցիաներով', {decl:['int n;', 'double x[101], mx, pr;'],
+  subs:[MAXF, {sig:'double prodIdx(int n, double x[], double mx)', head:'prodIdx(n, x, mx)', decl:['double p;'],
+    body:[P('p = 1'), FOR('i', '1', 'n', [IF('x[i] == mx', [P('p = p * i')])]), RET('p')]}],
+  body:[arrIn(), CALL('mx = maxArr(n, x)'), CALL('pr = prodIdx(n, x, mx)'), outV('pr', 'P')]});
+add(621, 'Մեծագույն տարրի (միակի) և նրա համարի արտադրյալը. ներմուծումը՝ պրոցեդուրայով, արտադրյալը՝ ֆունկցիայով', {decl:['int n;', 'double x[101], r;'],
+  subs:[INPUT, {sig:'double prodMax(int n, double x[])', head:'prodMax(n, x)', decl:['int k;'], body:[P('k = 1'), FOR('i', '2', 'n', [IF('x[i] > x[k]', [P('k = i')])]), RET('x[k] * k')]}],
+  body:[CALL('input(n, x)'), CALL('r = prodMax(n, x)'), outV('r', 'Պատասխան')]});
+add(622, 'Նոր վեկտոր բոլոր բացասական տարրերի համարներից. ' + IO2, {decl:['int n, m;', 'double x[101], y[101];'], subs:[INPUT, OUTPUT],
+  body:[CALL('input(n, x)'), P('m = 0'), FOR('i', '1', 'n', [IF('x[i] < 0', [P(['m = m + 1', 'y[m] = i'])])]), outOrEmpty()]}, 'y-ի մեջ գրում ենք ոչ թե x[i]-ն, այլ հենց i համարը։');
+add(623, 'Նոր զանգված այն տարրերից (բացի առաջինից և վերջինից), որոնք մեծ են իրենց հարևանների գումարից. ներմուծումը և կառուցումը՝ պրոցեդուրաներով', {decl:['int n, m;', 'double x[101], y[101];'],
+  subs:[INPUT, {sig:'void build(int n, double x[], int &m, double y[])', head:'build(n, x, m, y)',
+    body:[P('m = 0'), FOR('i', '2', 'n - 1', [IF('x[i] > x[i - 1] + x[i + 1]', [ADD])])]}],
+  body:[CALL('input(n, x)'), CALL('build(n, x, m, y)'), printY()]}, 'Ցիկլը 2-ից մինչև n − 1 է, որովհետև առաջինը և վերջինը երկու հարևան չունեն։');
+add(624, 'Նոր վեկտոր [5; 114]-ին պատկանող այն տարրերից, որոնց ամբողջ մասը բազմապատիկ է 3-ին. ' + IO2, {decl:['int n, m;', 'double x[101], y[101];'], subs:[INPUT, OUTPUT],
+  body:[CALL('input(n, x)'), P('m = 0'), FOR('i', '1', 'n', [IF('x[i] >= 5 && x[i] <= 114 && (int)x[i] % 3 == 0', [ADD])]), outOrEmpty()]});
+add(625, 'Բացարձակ արժեքով k-ից մեծ ոչ դրական տարրերի քանակը. քանակը՝ ֆունկցիայով, ներմուծումը՝ պրոցեդուրայով', {decl:['int n, r;', 'double x[101], k;'],
+  subs:[INPUT, {sig:'int countK(int n, double x[], double k)', head:'countK(n, x, k)', decl:['int cnt;'],
+    body:[P('cnt = 0'), FOR('i', '1', 'n', [IF('x[i] <= 0 && fabs(x[i]) > k', [P('cnt = cnt + 1')])]), RET('cnt')]}],
+  body:[CALL('input(n, x)'), inV('k'), CALL('r = countK(n, x, k)'), outV('r', 'Քանակ')]});
+
+/* ---------- groups ---------- */
+const GROUPS = [
+  {list:'list1', items:[[221, 240, 'Իրական տարրեր. գումար, արտադրյալ, քանակ, միջիններ'], [241, 260, 'Ամբողջ տարրեր. զույգություն, բազմապատիկություն, մնացորդներ'], [261, 270, 'Մեծագույն և փոքրագույն'], [291, 300, 'Նոր Y վեկտոր']]},
+  {list:'list2', items:[[411, 420, 'Բնական թվերի մատրից'], [421, 440, 'Իրական թվերի մատրից']]},
+  {list:'list3', items:[[591, 595, 'max / min՝ ֆունկցիայով'], [596, 600, 'max / min՝ պրոցեդուրայով'], [601, 605, 'φ(x, y)՝ ֆունկցիայով'], [606, 610, 'φ(x, y)՝ պրոցեդուրայով'], [611, 625, 'Զանգված + ենթածրագրեր']]}
+];
+const byId = new Map(PR.map(p => [p.id, p]));
+function cardHTML(p){
+  return `<details class="pr" id="p${p.id}" data-id="${p.id}"><summary><span class="n">${p.id}</span><span class="t">${esc(p.ru)}</span></summary><div class="prbody"></div></details>`;
+}
+for (const g of GROUPS) {
+  const el = document.getElementById(g.list); let html = '';
+  for (const [a, b, title] of g.items) {
+    html += `<div class="grouphead">${a}–${b}. ${esc(title)}</div>`;
+    for (let id = a; id <= b; id++) if (byId.has(id)) html += cardHTML(byId.get(id));
+  }
+  el.innerHTML = html;
+}
+function renderSolution(body, p){
+  const code = program(p);
+  let html = p.note ? `<p class="note">${esc(p.note)}</p>` : '';
+  html += `<div class="codehead"><span>C++ կոդ</span><button class="copy" type="button">Պատճենել</button></div><pre>${esc(code)}</pre>`;
+  for (const c of charts(p)) html += `<div class="fctitle">Բլոկ-սխեմա. ${esc(c.title)}</div><div class="fcwrap">${chartSVG(c.nodes)}</div>`;
+  body.innerHTML = html; body.dataset.done = '1';
+  body.querySelector('.copy').addEventListener('click', e => {
+    const btn = e.currentTarget;
+    const done = () => { btn.textContent = 'Պատճենված է'; setTimeout(() => btn.textContent = 'Պատճենել', 1500); };
+    try { navigator.clipboard.writeText(code).then(done, () => {}); } catch (err) {}
+  });
+}
+function fillCard(d){
+  const body = d.querySelector('.prbody'); if (body.dataset.done) return;
+  renderSolution(body, byId.get(+d.dataset.id));
+}
+document.querySelectorAll('details.pr').forEach(d => d.addEventListener('toggle', () => { if (d.open) fillCard(d); }));
+
+
+/* ---------- practice ---------- */
+const PX = [];
+const addP = (id, ru, hint, spec, note) => PX.push({id, ru, hint, note, ...spec});
+const in2 = () => IN('Ներմուծում n, x[1..n], y[1..n]', ['cin >> n;', 'for (int i = 1; i <= n; i++)', '    cin >> x[i];', 'for (int i = 1; i <= n; i++)', '    cin >> y[i];']);
+const INPUTM = {sig:'void input(int &n, double c[][11])', head:'input(n, c)', body:[matIn()]};
+const rowVec = (ty, init, cond, upd) => ({decl:['int n;', `${ty} c[11][11], b[11];`],
+  body:[matIn(), FOR('i', '1', 'n', [P(init), FOR('j', '1', 'n', [IF(cond, [P(upd)])])]), FOR('i', '1', 'n', [OUT('Արտածում b[i]', ['cout << b[i] << " ";'])])]});
+const ROWNOTE = 'Նոր սկզբունք. կուտակիչը b[i]-ն է, և այն սկզբնավորվում է ամեն տողի համար առանձին՝ i-ի ցիկլի ներսում, j-ի ցիկլից առաջ։';
+addP(271, 'Տրված են n տարր պարունակող X և Y զանգվածները։ Հաշվել նրանց տարրերի միջին թվաբանականների արտադրյալը',
+  'Ձևանմուշ 1՝ առանց պայմանի. մեկ ցիկլում երկու գումար՝ x-ի և y-ի համար, հետո (sx / n) * (sy / n)։',
+  {decl:['int n;', 'double x[101], y[101], sx, sy;'], body:[in2(), P(['sx = 0', 'sy = 0']), FOR('i', '1', 'n', [P(['sx = sx + x[i]', 'sy = sy + y[i]'])]), outV('(sx / n) * (sy / n)', 'Պատասխան')]});
+addP(273, 'X և Y զանգվածների դրական տարրերի ընդհանուր քանակը',
+  'Ձևանմուշ 1, քանակ. մեկ ցիկլում երկու if՝ x[i]-ի և y[i]-ի համար, նույն cnt-ով։',
+  {decl:['int n, cnt;', 'double x[101], y[101];'], body:[in2(), P('cnt = 0'), FOR('i', '1', 'n', [IF('x[i] > 0', [P('cnt = cnt + 1')]), IF('y[i] > 0', [P('cnt = cnt + 1')])]), outV('cnt', 'Քանակ')]});
+addP(277, 'X և Y զանգվածների 7-ին բազմապատիկ տարրերի ընդհանուր գումարը (ամբողջ թվեր)',
+  'Ձևանմուշ 1, գումար, int զանգվածներ, երկու if մեկ ցիկլում։',
+  {decl:['int n;', 'int x[101], y[101];', 'double s;'], body:[in2(), P('s = 0'), FOR('i', '1', 'n', [IF('x[i] % 7 == 0', [P('s = s + x[i]')]), IF('y[i] % 7 == 0', [P('s = s + y[i]')])]), outV('s', 'S')]});
+addP(301, 'Նոր Y վեկտոր՝ X-ից հեռացնելով դրական տարրերը',
+  'Ձևանմուշ 1գ. «հեռացնել դրականները» = վերցնել x[i] <= 0։', newVec({cond:'x[i] <= 0'}));
+addP(302, 'Նոր Y վեկտոր՝ X-ից հեռացնելով 7-ին բազմապատիկ տարրերը (ամբողջ թվեր)',
+  'Ձևանմուշ 1գ, int զանգված, պայմանը շրջված է՝ x[i] % 7 != 0։', newVec({type:'int', cond:'x[i] % 7 != 0'}));
+addP(304, 'Նոր Y վեկտոր՝ X-ից հեռացնելով կենտ ինդեքսով տարրերը',
+  'Ձևանմուշ 1գ. մնում են զույգ ինդեքսով տարրերը՝ i % 2 == 0։', newVec({cond:'i % 2 == 0'}));
+addP(461, 'n×n մատրիցի գլխավոր անկյունագծից ներքև կամ նրա վրա գտնվող տարրերից փոքրագույնը',
+  'Ձևանմուշ 2 + 1բ. սկզբնական արժեքը՝ c[1][1] (այն անկյունագծի վրա է), պայմանը՝ i >= j && c[i][j] < mn։',
+  {decl:['int n;', 'double c[11][11], mn;'], body:[matIn(), P('mn = c[1][1]'), FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF('i >= j && c[i][j] < mn', [P('mn = c[i][j]')])])]), outV('mn', 'min')]});
+addP(462, 'n×n մատրիցի գլխավոր անկյունագծից վերև կամ նրա վրա գտնվող տարրերից մեծագույնը',
+  'Ձևանմուշ 2 + 1բ. սկզբնական արժեքը՝ c[1][1], պայմանը՝ i <= j && c[i][j] > mx։',
+  {decl:['int n;', 'double c[11][11], mx;'], body:[matIn(), P('mx = c[1][1]'), FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF('i <= j && c[i][j] > mx', [P('mx = c[i][j]')])])]), outV('mx', 'max')]});
+addP(466, 'n×n մատրիցի k-րդ տողի մեծագույն տարրը',
+  'Տողը ֆիքսված է, ուստի բավական է մեկ ցիկլ ըստ j-ի՝ c[k][j]։ Սկսիր c[k][1]-ից, ցիկլը՝ j = 2-ից։',
+  {decl:['int n, k;', 'double c[11][11], mx;'], body:[matIn(), inV('k'), P('mx = c[k][1]'), FOR('j', '2', 'n', [IF('c[k][j] > mx', [P('mx = c[k][j]')])]), outV('mx', 'max')]});
+addP(467, 'n×n մատրիցի l-րդ սյան փոքրագույն տարրը',
+  'Սյունը ֆիքսված է, ուստի մեկ ցիկլ ըստ i-ի՝ c[i][l]։ Սկսիր c[1][l]-ից, ցիկլը՝ i = 2-ից։',
+  {decl:['int n, l;', 'double c[11][11], mn;'], body:[matIn(), inV('l'), P('mn = c[1][l]'), FOR('i', '2', 'n', [IF('c[i][l] < mn', [P('mn = c[i][l]')])]), outV('mn', 'min')]});
+addP(446, 'Մատրիցից կազմել B վեկտոր, որի b[i]-ն i-րդ տողի դրական տարրերի քանակն է',
+  'Ձևանմուշ 2, բայց քանակը հաշվում ենք ամեն տողի համար առանձին. b[i] = 0 գրիր i-ի ցիկլի ներսում, j-ի ցիկլից առաջ։',
+  rowVec('double', 'b[i] = 0', 'c[i][j] > 0', 'b[i] = b[i] + 1'), ROWNOTE);
+addP(447, 'Մատրիցից կազմել B վեկտոր, որի b[i]-ն i-րդ տողի կենտ տարրերի գումարն է (ամբողջ թվեր)',
+  'Ինչպես 446-ը, բայց գումար. b[i] = 0, պայմանը՝ c[i][j] % 2 != 0, մատրիցը՝ int։',
+  rowVec('int', 'b[i] = 0', 'c[i][j] % 2 != 0', 'b[i] = b[i] + c[i][j]'), ROWNOTE);
+addP(449, 'Մատրիցից կազմել B վեկտոր, որի b[i]-ն i-րդ տողի բացասական տարրերի արտադրյալն է',
+  'Ինչպես 446-ը, բայց արտադրյալ. սկզբնական արժեքը b[i] = 1։',
+  rowVec('double', 'b[i] = 1', 'c[i][j] < 0', 'b[i] = b[i] * c[i][j]'), ROWNOTE + ' Եթե տողում բացասական չկա, b[i]-ն կմնա 1։');
+addP(626, 'Գլխավոր անկյունագծից վերև գտնվող տարրերից մեծագույնը. մեծագույնը՝ ֆունկցիայով, ներմուծումը՝ պրոցեդուրայով',
+  'Ձևանմուշ 3 + 2. պրոցեդուրա input(n, c) և ֆունկցիա, որի ներսում ձևանմուշ 2-ն է։ Մատրիցը փոխանցվում է որպես double c[][11]։ Սկսիր c[1][2]-ից։',
+  {decl:['int n;', 'double c[11][11], mx;'], subs:[INPUTM, {sig:'double maxUp(int n, double c[][11])', head:'maxUp(n, c)', decl:['double m;'],
+    body:[P('m = c[1][2]'), FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF('i < j && c[i][j] > m', [P('m = c[i][j]')])])]), RET('m')]}],
+   body:[CALL('input(n, c)'), CALL('mx = maxUp(n, c)'), outV('mx', 'max')]}, 'Ենթադրվում է n ≥ 2. c[1][2]-ը գլխավոր անկյունագծից վերև է, ուստի սկսում ենք դրանից։');
+addP(627, 'Օժանդակ անկյունագծից ներքև գտնվող տարրերի միջին քառակուսայինը. միջինը՝ ֆունկցիայով, ներմուծումը՝ պրոցեդուրայով',
+  'Ձևանմուշ 3 + 2. ֆունկցիայի ներսում s և cnt, պայմանը՝ i + j > n + 1, վերադարձ sqrt(s / cnt)։',
+  {decl:['int n;', 'double c[11][11], r;'], subs:[INPUTM, {sig:'double rmsDown(int n, double c[][11])', head:'rmsDown(n, c)', decl:['double s, r;', 'int cnt;'],
+    body:[P(['s = 0', 'cnt = 0']), FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF('i + j > n + 1', [P(['s = s + c[i][j] * c[i][j]', 'cnt = cnt + 1'])])])]), P('r = 0'), IF('cnt > 0', [P('r = sqrt(s / cnt)')]), RET('r')]}],
+   body:[CALL('input(n, c)'), CALL('r = rmsDown(n, c)'), outV('r', 'Միջին քառակուսային')]});
+addP(633, 'Օժանդակ անկյունագծից ներքև կամ նրա վրա գտնվող տարրերից փոքրագույնը. փոքրագույնը՝ ֆունկցիայով, ներմուծումը՝ պրոցեդուրայով',
+  'Ձևանմուշ 3 + 2. սկսիր c[1][n]-ից (այն օժանդակ անկյունագծի վրա է), պայմանը՝ i + j >= n + 1 && c[i][j] < m։',
+  {decl:['int n;', 'double c[11][11], mn;'], subs:[INPUTM, {sig:'double minDown(int n, double c[][11])', head:'minDown(n, c)', decl:['double m;'],
+    body:[P('m = c[1][n]'), FOR('i', '1', 'n', [FOR('j', '1', 'n', [IF('i + j >= n + 1 && c[i][j] < m', [P('m = c[i][j]')])])]), RET('m')]}],
+   body:[CALL('input(n, c)'), CALL('mn = minDown(n, c)'), outV('mn', 'min')]});
+const pxById = new Map(PX.map(p => [p.id, p]));
+(function(){
+  const groups = [['Զանգվածներ', [271, 273, 277, 301, 302, 304]], ['Մատրիցներ', [461, 462, 466, 467, 446, 447, 449]], ['Ենթածրագրեր', [626, 627, 633]]];
+  let html = '';
+  for (const [title, ids] of groups) {
+    html += `<div class="grouphead">${esc(title)}</div>`;
+    for (const id of ids) { const p = pxById.get(id);
+      html += `<div class="pcard" id="x${id}" data-id="${id}"><div class="phead"><span class="n">${id}</span><span class="t">${esc(p.ru)}</span></div>` +
+        `<div class="pbtns"><button type="button" data-act="hint" aria-expanded="false">Հուշում</button><button type="button" class="sol" data-act="sol" aria-expanded="false">Ցույց տալ լուծումը</button></div>` +
+        `<p class="phint" hidden>${esc(p.hint)}</p><div class="psol" hidden></div></div>`;
+    }
+  }
+  const el = document.getElementById('listP'); el.innerHTML = html;
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    const card = b.closest('.pcard'), p = pxById.get(+card.dataset.id);
+    const box = card.querySelector(b.dataset.act === 'hint' ? '.phint' : '.psol');
+    const show = box.hidden; box.hidden = !show; b.setAttribute('aria-expanded', String(show));
+    if (b.dataset.act === 'sol') {
+      if (show && !box.dataset.done) renderSolution(box, p);
+      b.textContent = show ? 'Թաքցնել լուծումը' : 'Ցույց տալ լուծումը';
+      card.classList.toggle('opened', show);
+    } else b.textContent = show ? 'Թաքցնել հուշումը' : 'Հուշում';
+  });
+})();
+
+/* ---------- random task ---------- */
+const tplName = id => id <= 260 ? 'Ձևանմուշ 1. ներմուծում → ցիկլ → if → գործողություն → արտածում' : id <= 270 ? 'Ձևանմուշ 1բ. մեծագույն / փոքրագույն (k = 1, ցիկլը 2-ից)' : id <= 300 ? 'Ձևանմուշ 1գ. նոր վեկտոր (m = m + 1, y[m] = x[i])' : id <= 440 ? 'Ձևանմուշ 2. երկու ցիկլ, if (տիրույթ && պայման)' : id <= 600 ? 'Ձևանմուշ 3. max3 / min3 ֆունկցիա կամ պրոցեդուրա, main-ում երկու կանչ' : id <= 610 ? 'Ձևանմուշ 3. phi ֆունկցիա կամ պրոցեդուրա, main-ում x, y, a, հետո z' : 'Ձևանմուշ 3. input / output պրոցեդուրաներ + ֆունկցիա, որի ներսում ձևանմուշ 1-ն է';
+let lastRnd = 0;
+function showRandom(){
+  let p; do { p = PR[Math.floor(Math.random() * PR.length)]; } while (PR.length > 1 && p.id === lastRnd);
+  lastRnd = p.id;
+  const box = document.getElementById('rndBox');
+  box.hidden = false; box.dataset.id = p.id;
+  box.innerHTML = `<p class="rndtop">Պատահական խնդիր</p><div class="phead"><span class="n">${p.id}</span><span class="t">${esc(p.ru)}</span></div>` +
+    `<div class="pbtns"><button type="button" data-act="hint" aria-expanded="false">Հուշում</button><button type="button" class="sol" data-act="sol" aria-expanded="false">Ցույց տալ լուծումը</button><button type="button" data-act="next">🎲 Ուրիշ խնդիր</button></div>` +
+    `<p class="phint" hidden>${esc(tplName(p.id))}</p><div class="psol" hidden></div>`;
+  showTab('practice'); history.replaceState(null, '', '#practice');
+  requestAnimationFrame(() => { const hh = document.querySelector('header').getBoundingClientRect().height; window.scrollTo(0, box.getBoundingClientRect().top + window.scrollY - hh - 10); });
+}
+document.getElementById('rndBtn').addEventListener('click', showRandom);
+document.getElementById('rndBtn2').addEventListener('click', showRandom);
+document.getElementById('rndBox').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  if (b.dataset.act === 'next') { showRandom(); return; }
+  const box = e.currentTarget, p = byId.get(+box.dataset.id);
+  const area = box.querySelector(b.dataset.act === 'hint' ? '.phint' : '.psol');
+  const show = area.hidden; area.hidden = !show; b.setAttribute('aria-expanded', String(show));
+  if (b.dataset.act === 'sol') { if (show && !area.dataset.done) renderSolution(area, p); b.textContent = show ? 'Թաքցնել լուծումը' : 'Ցույց տալ լուծումը'; }
+  else b.textContent = show ? 'Թաքցնել հուշումը' : 'Հուշում';
+});
+
+/* ---------- templates ---------- */
+const TPL = {
+  t1: [T('Սկիզբ'), IN('Ներմուծում n, x[1..n]'), H(P('սկզբնական արժեք')), FOR('i', '1', 'n', [H(IF('պայման', [H(P('գործողություն'))]))]), H(OUT('Արդյունքի արտածում')), T('Վերջ')],
+  t1m: [T('Սկիզբ'), IN('Ներմուծում n, x[1..n]'), P('k = 1'), FOR('i', '2', 'n', [H(IF('x[i] > x[k]', [P('k = i')]))]), OUT('Արտածում x[k], k'), T('Վերջ')],
+  t1v: [T('Սկիզբ'), IN('Ներմուծում n, x[1..n]'), P('m = 0'), FOR('i', '1', 'n', [H(IF('պայման', [P(['m = m + 1', 'y[m] = x[i]'])]))]), IF('m == 0', [OUT('Արտածում «Վեկտորը դատարկ է»')], [FOR('i', '1', 'm', [OUT('Արտածում y[i]')])]), T('Վերջ')],
+  t2: [T('Սկիզբ'), IN('Ներմուծում n, c[1..n][1..n]'), H(P('սկզբնական արժեք')), FOR('i', '1', 'n', [FOR('j', '1', 'n', [H(IF('տիրույթ && պայման', [H(P('գործողություն'))]))])]), H(OUT('Արդյունքի արտածում')), T('Վերջ')],
+  t3f: [T('max3(x, y, z)'), P('m = x'), IF('y > m', [P('m = y')]), IF('z > m', [P('m = z')]), RET('m')],
+  t3m: [T('Սկիզբ'), IN('Ներմուծում a, b'), CALL('m1 = max3(a, a + b, a - b)'), CALL('m2 = max3(b, 2 * b - a, b + 2 * a)'), P('y = m1 + m2'), OUT('Արտածում y'), T('Վերջ')],
+  t3i: [T('input(n, x)'), IN('Ներմուծում n, x[1..n]'), T('Վերջ')],
+  t3am: [T('Սկիզբ'), CALL('input(n, x)'), H(CALL('s = sumPos(n, x)')), OUT('Արտածում s'), T('Վերջ')]
+};
+function renderTemplates(){ document.querySelectorAll('[data-tpl]').forEach(el => { el.innerHTML = chartSVG(TPL[el.dataset.tpl]); }); }
+
+/* ---------- region grid ---------- */
+const REG = [
+  ['գլխավոր անկյունագիծ', (i, j, n) => i === j, 'i == j'],
+  ['գլխավորից վերև', (i, j) => i < j, 'i < j'],
+  ['գլխավորից վերև կամ վրան', (i, j) => i <= j, 'i <= j'],
+  ['գլխավորից ներքև', (i, j) => i > j, 'i > j'],
+  ['գլխավորից ներքև կամ վրան', (i, j) => i >= j, 'i >= j'],
+  ['օժանդակ անկյունագիծ', (i, j, n) => i + j === n + 1, 'i + j == n + 1'],
+  ['օժանդակից վերև', (i, j, n) => i + j < n + 1, 'i + j < n + 1'],
+  ['օժանդակից վերև կամ վրան', (i, j, n) => i + j <= n + 1, 'i + j <= n + 1'],
+  ['օժանդակից ներքև', (i, j, n) => i + j > n + 1, 'i + j > n + 1'],
+  ['օժանդակից ներքև կամ վրան', (i, j, n) => i + j >= n + 1, 'i + j >= n + 1']
+];
+const rg = document.getElementById('regions'), mg = document.getElementById('mgrid'), rc = document.getElementById('regcond');
+const NG = 6;
+for (let i = 1; i <= NG; i++) for (let j = 1; j <= NG; j++) { const c = document.createElement('div'); c.textContent = i + ',' + j; c.dataset.i = i; c.dataset.j = j; mg.appendChild(c); }
+function showReg(k){
+  [...rg.children].forEach((b, idx) => b.setAttribute('aria-pressed', idx === k ? 'true' : 'false'));
+  [...mg.children].forEach(c => c.classList.toggle('on', REG[k][1](+c.dataset.i, +c.dataset.j, NG)));
+  rc.textContent = REG[k][2];
+}
+REG.forEach((r, k) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = r[0]; b.addEventListener('click', () => showReg(k)); rg.appendChild(b); });
+showReg(3);
+
+/* ---------- tabs, search, hash ---------- */
+const tabs = [...document.querySelectorAll('nav button')];
+function showTab(name){
+  tabs.forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
+  ['principle', 'b1', 'b2', 'b3', 'practice'].forEach(s => document.getElementById(s).hidden = s !== name);
+}
+tabs.forEach(b => b.addEventListener('click', () => { showTab(b.dataset.tab); history.replaceState(null, '', '#' + b.dataset.tab); window.scrollTo(0, 0); }));
+function blockOf(id){ return id <= 300 ? 'b1' : id <= 440 ? 'b2' : 'b3'; }
+function openProblem(id, scroll = true){
+  let d = document.getElementById('p' + id);
+  if (d) { showTab(blockOf(id)); d.open = true; fillCard(d); }
+  else { d = document.getElementById('x' + id); if (!d) return false; showTab('practice'); }
+  if (scroll) requestAnimationFrame(() => { const hh = document.querySelector('header').getBoundingClientRect().height; window.scrollTo(0, d.getBoundingClientRect().top + window.scrollY - hh - 10); });
+  return true;
+}
+const msg = document.getElementById('findMsg');
+document.getElementById('findForm').addEventListener('submit', e => {
+  e.preventDefault(); const id = parseInt(document.getElementById('findNum').value, 10);
+  if (openProblem(id)) { msg.textContent = ''; history.replaceState(null, '', '#p' + id); }
+  else msg.textContent = 'Այդ խնդիրն այստեղ չկա։ Կան՝ 221–270, 291–300, 411–440, 591–625 և վարժությունները։';
+});
+function route(){
+  const h = location.hash.slice(1);
+  if (/^p\d+$/.test(h)) { if (openProblem(+h.slice(1))) return; }
+  if (['principle', 'b1', 'b2', 'b3', 'practice'].includes(h)) { showTab(h); return; }
+  showTab('principle');
+}
+window.addEventListener('hashchange', route);
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { renderTemplates(); route(); });
+</script>
+</body>
+</html>
